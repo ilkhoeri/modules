@@ -1,21 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-/**
- * ```js
- * // usage
-  function Demo() {
-    const { hovered, ref } = useHover();
-    return (
-      <div ref={ref}>
-        {hovered ? 'I am hovered' : 'Put mouse over me please'}
-      </div>
-    );
-  }
- * ```
- * @returns 
- */
-export function useHover<T extends HTMLElement = HTMLDivElement>() {
+export function useHover<T extends HTMLElement = HTMLElement>() {
   const [hovered, setHovered] = useState(false);
   const ref = useRef<T>(null);
   const onMouseEnter = useCallback(() => setHovered(true), []);

@@ -2,6 +2,7 @@ export * from "./button-link";
 export * from "./animation";
 export * from "./spotlight";
 export * from "./collapsible";
+export * from "./loader";
 
 export { HighlightText } from "./highlight-text";
 

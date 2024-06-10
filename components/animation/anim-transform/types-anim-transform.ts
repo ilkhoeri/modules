@@ -11,8 +11,8 @@ export type TransformProps = {
    *```
    */
   opacity?: {
-    before?: number;
-    after?: number;
+    before?: number | string;
+    after?: number | string;
   };
   /**
    *### withoutOpacity is boolean

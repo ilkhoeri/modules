@@ -30,7 +30,7 @@ export { useScrollIntoView } from "./use-scroll-into-view/use-scroll-into-view";
 export { useUncontrolled } from "./use-uncontrolled/use-uncontrolled";
 export { useViewportSize } from "./use-viewport-size/use-viewport-size";
 export { useWindowEvent } from "./use-window-event/use-window-event";
-export { useWindowScroll } from "./use-window-scroll/use-window-scroll";
+export { useWindowScroll, useScroll } from "./use-window-scroll/use-window-scroll";
 export { useId } from "./use-id/use-id";
 export { useImagePopup } from "./use-image-popup/use-image-popup";
 export { useReactId } from "./use-id/use-react-id";

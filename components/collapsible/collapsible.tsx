@@ -3,7 +3,7 @@
 import * as React from "react";
 import { cnx } from "../../utils/cnx";
 import { stylesCollapsibleVars, useCollapsible } from "./utils";
-import { ChevronDownSquareRoundedIcon } from "../../icons";
+import { ChevronDownSquareIcon } from "../../icons";
 
 import type {
   ComponentType,
@@ -82,7 +82,7 @@ const CollapsibleTrigger = React.forwardRef<
   return (
     <button {...rest}>
       {children}
-      {withArrow && <ChevronDownSquareRoundedIcon data-collapse="arrow-trigger" />}
+      {withArrow && <ChevronDownSquareIcon data-collapse="arrow-trigger" />}
     </button>
   );
 });

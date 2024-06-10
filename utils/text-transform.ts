@@ -226,13 +226,13 @@ export function sanitizedToTag(str: string | undefined): string {
     return firstName;
   }
 
-  const name1 = "aoeri tra lala - tri - ~ lili";
+  const name1 = "ioeri tra lala - tri - ~ lili";
   const name2 = "abdurrahman jalaluddin el khoeri";
 
 const firstName1 = getFirstString(name1);
 const firstName2 = getFirstString(name2);
 
-console.log(firstName1); // Output: aoeri
+console.log(firstName1); // Output: ioeri
 console.log(firstName2); // Output: abdurrahman
   ```
  */

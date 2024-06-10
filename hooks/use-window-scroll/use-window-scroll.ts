@@ -32,10 +32,68 @@ export function useWindowScroll() {
 
   useWindowEvent("scroll", () => setPosition(getScrollPosition()));
   useWindowEvent("resize", () => setPosition(getScrollPosition()));
-
   useEffect(() => {
     setPosition(getScrollPosition());
   }, []);
-
   return [position, scrollTo] as const;
+}
+
+function checkIfBottom(): boolean {
+  const windowHeight = window.innerHeight;
+  const documentHeight = document.documentElement.scrollHeight;
+  const scrollTop = window.scrollY;
+  const tolerance = 5; // small tolerance
+
+  return scrollTop + windowHeight + tolerance >= documentHeight;
+}
+
+export function useScroll() {
+  const [bottom, setBottom] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [position, setPosition] = useState<ScrollPosition>({ x: 0, y: 0 });
+  const [isScroll, setIsScroll] = useState(false);
+
+  let scrollTimeout: NodeJS.Timeout | null = null;
+
+  const handleScroll = () => {
+    const pos = getScrollPosition();
+    setPosition(pos);
+    setBottom(checkIfBottom());
+    setIsScroll(true);
+
+    if (scrollTimeout) {
+      clearTimeout(scrollTimeout);
+    }
+
+    scrollTimeout = setTimeout(() => {
+      setIsScroll(false);
+    }, 1500); // Duration to detect when scrolling stops
+  };
+
+  useWindowEvent("scroll", handleScroll);
+  useWindowEvent("resize", handleScroll);
+
+  // Sets the scroll position and bottom state when the component is first loaded
+  useEffect(() => {
+    handleScroll();
+    setMounted(true);
+  }, []);
+
+  const scrollToBottom = () => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: "smooth",
+    });
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  const scrollWindow = bottom ? scrollToTop : scrollToBottom;
+
+  return { position, scrollTo, bottom, mounted, isScroll, scrollWindow };
 }

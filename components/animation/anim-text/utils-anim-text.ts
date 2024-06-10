@@ -148,6 +148,7 @@ export function useTextRunning({ speed = 25, direction = "left-to-right" }: Anim
     animationFrameId.current = requestAnimationFrame(animate);
 
     return () => {
+      inner.remove()
       inner.removeEventListener("touchstart", handleTouchStart);
       inner.removeEventListener("touchmove", handleTouchMove);
       inner.removeEventListener("touchend", handleTouchEnd);
@@ -173,6 +174,7 @@ export function useTextSpiral({ el, placeholders, duration = 4000 }: AnimTextSpi
         const inner = document.createElement((el?.inner as string) || "div");
         inner.innerText = char;
         inner.style.animationDelay = `-${i * (duration / 16) - offset}ms`;
+
         return inner;
       }
 

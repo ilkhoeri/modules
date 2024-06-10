@@ -11,7 +11,7 @@ export type UseSlideType = {
 export type ScrollDirectionType = "up" | "down";
 
 export function useSlide({ threshold = 50, speedThreshold = 5 }: UseSlideType = {}) {
-  const [scroll] = useWindowScroll();
+  const [position] = useWindowScroll();
   const [scrollDirection, setScrollDirection] = useState<ScrollDirectionType>("up");
   const [open, setOpen] = useState(false);
   const [touchStartY, setTouchStartY] = useState(0);
@@ -105,7 +105,7 @@ export function useSlide({ threshold = 50, speedThreshold = 5 }: UseSlideType = 
     }
   }
 
-  const isScrollUp = scrollDirection === "up" || scroll.y === 0;
+  const isScrollUp = scrollDirection === "up" || position.y === 0;
   const isScrollDown = scrollDirection === "down";
 
   const UP = isScrollUp ? 0 : -1;

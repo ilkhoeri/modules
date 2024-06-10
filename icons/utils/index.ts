@@ -12,20 +12,12 @@ export interface IconTree {
   child: IconTree[];
 }
 export declare function GenIcon(data: IconTree): (props: _SVGType) => React.JSX.Element;
-export interface _SVGType extends React.SVGAttributes<SVGElement> {
+export interface _SVGType extends React.SVGAttributes<SVGElement>, SizesProps {
   children?: React.ReactNode;
-  /**
-   * @summary size
-   *```js
-   * type size?: "xs" | "base" | "sm" | "md" | "lg" | "xl" | "xxl" | "xxxl" | (string & {}) | number | undefined
-   * ```
-   */
-  size?: ArmSize;
-  h?: string | number | undefined;
-  w?: string | number | undefined;
   color?: ArmColor;
   ref?: React.Ref<SVGSVGElement>;
   style?: CSSProperties;
+  currentFill?: "fill" | "stroke" | "fill-stroke";
 }
 export type IconType = (props: _SVGType) => JSX.Element;
 export declare function IconBase(
@@ -46,8 +38,11 @@ export interface SizesProps {
    * ```
    */
   size?: ArmSize;
-  h?: string | number | undefined;
-  w?: string | number | undefined;
+  h?: string | number;
+  w?: string | number;
+  height?: string | number;
+  width?: string | number;
+  ratio?: { h?: number; w?: number };
 }
 export const getSv = (size: ArmSize): string => {
   const sizeMap: Record<InitialSize, string> = {
@@ -62,18 +57,90 @@ export const getSv = (size: ArmSize): string => {
     xxl: "86px",
     xxxl: "112px",
   };
-  return sizeMap[size as InitialSize] || "";
+  return sizeMap[size as InitialSize];
 };
-export const useSize = ({ size, h, w }: SizesProps) => {
+export function useSize({ size = "16px", height, width, h, w, ratio }: SizesProps) {
   const val_sz = getSv(size);
-  const hand_sz = ["xs", "xxs", "xxxs", "sm", "base", "md", "lg", "xl", "xxl", "xxxl"].includes(size as string)
-    ? val_sz
-    : size;
-  const hand_h = typeof h === "number" ? `${h}px` : h;
-  const hand_w = typeof w === "number" ? `${w}px` : w;
+  const inSz = ["xs", "xxs", "xxxs", "sm", "base", "md", "lg", "xl", "xxl", "xxxl"];
+
+  const hand_sz = (sz: ArmSize) => (inSz.includes(sz as string) ? val_sz : sz);
+
+  const ratioSize = (sz: string | number, rt: number | undefined) =>
+    typeof sz === "number" ? sz * (rt || 1) : `${Number(sz.replace(/[^\d.-]/g, "")) * (rt || 1)}px`;
+
+  const sizer = (rt: number | undefined) =>
+    inSz.includes(size as string) ? ratioSize(val_sz, rt) : ratioSize(size, rt);
+
+  const hand_h = height || h || hand_sz(sizer(ratio?.h));
+  const hand_w = width || w || hand_sz(sizer(ratio?.w));
 
   return { hand_sz, hand_h, hand_w };
-};
+}
+
+export function useSVG({
+  viewBox = "0 0 24 24",
+  xmlns = "http://www.w3.org/2000/svg",
+  "aria-hidden": ariaHidden = "true",
+  fill,
+  size,
+  w,
+  width,
+  height,
+  h,
+  stroke,
+  strokeWidth,
+  strokeLinecap,
+  strokeLinejoin,
+  currentFill = "stroke",
+  ratio,
+  ...props
+}: _SVGType) {
+  const sz = useSize({ size, h, w, height, width, ratio });
+
+  const attr = {
+    viewBox,
+    xmlns,
+    "aria-hidden": ariaHidden,
+    height: sz.hand_h,
+    width: sz.hand_w,
+    ...props,
+  };
+
+  let rest = { fill, stroke, strokeWidth, strokeLinecap, strokeLinejoin, ...attr };
+
+  if (currentFill === "stroke") {
+    rest = {
+      fill: fill || "none",
+      stroke: stroke || "currentColor",
+      strokeWidth: strokeWidth || "2",
+      strokeLinecap: strokeLinecap || "round",
+      strokeLinejoin: strokeLinejoin || "round",
+      ...attr,
+    };
+  }
+  if (currentFill === "fill") {
+    rest = {
+      fill: fill || "currentColor",
+      stroke: stroke || "none",
+      strokeWidth: strokeWidth || "0",
+      strokeLinecap: strokeLinecap || undefined,
+      strokeLinejoin: strokeLinejoin || undefined,
+      ...attr,
+    };
+  }
+  if (currentFill === "fill-stroke") {
+    rest = {
+      fill: fill || "currentColor",
+      stroke: stroke || "currentColor",
+      strokeWidth: strokeWidth || "2",
+      strokeLinecap: strokeLinecap || "round",
+      strokeLinejoin: strokeLinejoin || "round",
+      ...attr,
+    };
+  }
+
+  return { rest, ...sz };
+}
 
 export type ArmColor = NamedColor | "currentColor" | (string & {});
 export interface ColorProps {
