@@ -1,6 +1,5 @@
-"use client";
 import { useCallback, useState, useEffect } from "react";
-import { useWindowEvent } from "../use-window-event/use-window-event";
+import { useWindowEvent } from "@/modules/hooks";
 
 const eventListerOptions = {
   passive: true,

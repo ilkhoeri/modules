@@ -1,6 +1,5 @@
-"use client";
 import { useEffect, useState } from "react";
-import { useWindowEvent } from "../use-window-event/use-window-event";
+import { useWindowEvent } from "@/modules/hooks";
 
 interface ScrollPosition {
   x: number;
@@ -73,7 +72,7 @@ export function useScroll() {
   useWindowEvent("scroll", handleScroll);
   useWindowEvent("resize", handleScroll);
 
-  // Sets the scroll position and bottom state when the component is first loaded
+  // Sets scroll position and bottom state when the component is first loaded
   useEffect(() => {
     handleScroll();
     setMounted(true);

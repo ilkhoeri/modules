@@ -1,7 +1,5 @@
-"use client";
-
 import { useCallback, useState } from "react";
-import { useIsomorphicEffect } from "../use-isomorphic-effect/use-isomorphic-effect";
+import { useIsomorphicEffect } from "@/modules";
 
 interface EyeDropperOpenOptions {
   signal?: AbortSignal;

@@ -1,5 +1,7 @@
-export { cnx, getCSX } from "./cnx";
-export type { ClassValue, ClassDictionary, ClassArray, CSXType } from "./cnx";
+export { getCSX } from "./cnx";
+export type { CSXType } from "./cnx";
+
+export { onChangeStartsWith, destructureAnchorHref } from "./onchange-startwith-input";
 
 export { attr, extendedAttr, getStyleObject } from "./record-types";
 
@@ -38,9 +40,10 @@ export {
   sanitizedToParams,
   desanitizeFromParams,
   desanitizeParams,
+  kebabToCamelCase,
 } from "./text-transform";
 
-export { markdownText } from "./formatter/mardown-text";
+export { markdownText } from "./formatter/markdown-text";
 export { parseText, processParseText } from "./formatter/parse-text";
 export { convertBytesToMB } from "./formatter/bytes";
 export { formatPrice, formatterIDR, formatterIDRK, formatterLong } from "./formatter/currency";

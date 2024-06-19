@@ -1,16 +1,12 @@
-"use client";
 import { useState } from "react";
 
 interface UseUncontrolledInput<T> {
   /** Value for controlled state */
   value?: T;
-
   /** Initial value for uncontrolled state */
   defaultValue?: T;
-
   /** Final value for uncontrolled state when value and defaultValue are not provided */
   finalValue?: T;
-
   /** Controlled state onChange handler */
   onChange?(value: T): void;
 }

@@ -1,62 +1,57 @@
-"use client";
+import { RefObject, useEffect, useState } from "react";
+import { useHasScrollbar, useWidthScrollbar, useHotkeys, createRefs } from "@/modules/hooks";
 
-import { useEffect, useState } from "react";
-import { useClickOutside } from "../use-click-outside/use-click-outside";
-import { useHasScrollbar } from "../use-has-scrollbar/use-has-scrollbar";
-import { useHotkeys } from "../use-hotkeys/use-hotkeys";
-import { applyStateEffect, removeBodyProperty, setBodyProperty } from "../../function/attribute-property";
+export enum OriginState {
+  Root = "root",
+  Trigger = "trigger",
+  Content = "content",
+  Overlay = "overlay",
+}
+export type TriggerType = "hover" | "click";
+export type OriginType = `${OriginState}`;
 
-export type OpenStateTriggerType = "hover" | "click";
-
-export type UseOpenStateType = {
+export type UseOpenStateType<T> = {
+  defaultOpen?: boolean;
   open?: boolean;
   setOpen?: (value: boolean) => void;
-  /** @default 100 */
   durationClose?: number;
-  /** menambah margin-right pada body ketika device desktop
-   * @default false
-   */
   widthHasScrollbar?: boolean;
-  /**
-   * ```js
-  // ctrl + J and ⌘ + J to toggle color scheme
-  // ctrl + K and ⌘ + K to search
-    "/" | "M" | "ctrl+J" | "ctrl+K" | "alt+mod+shift+X"
-    ```
-  */
+  clickOutsideToClose?: boolean;
   hotKeys?: "/" | "M" | "ctrl+J" | "ctrl+K" | "alt+mod+shift+X" | (string & {});
-  trigger?: OpenStateTriggerType;
+  trigger?: TriggerType;
+  ref?: RefObject<T>;
 };
 
-/**
- * ```js
- * // usage
-  const { handleOpen, handleClose } = useOpenState();
- * // or
-  const [open, setOpen] = useState(false);
-  const { handleOpen, handleClose } = useOpenState({ open, setOpen });
-  
-  onClick={handleOpen}
-  onClick={handleClose}
- * ```
- * @returns ref, open, setOpen, handleOpen, handleClose
- */
-export function useOpenState({
-  open: externalOpen,
-  setOpen: externalSetOpen,
-  hotKeys = "",
-  trigger = "click",
-  durationClose = 100,
-  widthHasScrollbar = false,
-}: UseOpenStateType = {}) {
-  const [openState, setOpenState] = useState(false);
+export function useOpenState<T>(OpenState: UseOpenStateType<T> = {}) {
+  const {
+    ref,
+    defaultOpen = false,
+    open: externalOpen,
+    setOpen: externalSetOpen,
+    hotKeys = "",
+    trigger = "click",
+    durationClose = 100,
+    widthHasScrollbar = false,
+    clickOutsideToClose = false,
+  } = OpenState;
+
+  const [openState, setOpenState] = useState(defaultOpen);
   const open = externalOpen !== undefined ? externalOpen : openState;
   const setOpen = externalSetOpen !== undefined ? externalSetOpen : setOpenState;
+
   const [render, setRender] = useState(open);
+  const [initialOpen, setInitialOpen] = useState(false);
   const [hasScrollbar, scrollbarWidth] = useHasScrollbar();
 
-  const ref = useClickOutside(() => setOpen(false));
+  const refs = createRefs<T, OriginState>(Object.values(OriginState), ref);
+
   useHotkeys([[hotKeys, () => setOpen(!open)]]);
+
+  useEffect(() => {
+    if (open !== defaultOpen) {
+      setInitialOpen(true);
+    }
+  }, [open, defaultOpen]);
 
   useEffect(() => {
     const historyPopState = () => {
@@ -84,7 +79,32 @@ export function useOpenState({
         clearTimeout(timeoutId);
       }
     };
-  }, [open, durationClose, setRender]);
+  }, [open, durationClose, setRender, clickOutsideToClose]);
+
+  useEffect(() => {
+    const root = refs?.root?.current as HTMLElement;
+    const trigger = refs?.trigger?.current as HTMLElement;
+    const content = refs?.content?.current as HTMLElement;
+    const clickOutsideHandler = (event: MouseEvent) => {
+      if (
+        open &&
+        clickOutsideToClose &&
+        !root?.contains(event.target as Node) &&
+        !trigger?.contains(event.target as Node) &&
+        !content?.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    if (open && clickOutsideToClose) {
+      document.addEventListener("click", clickOutsideHandler);
+    }
+
+    return () => {
+      document.removeEventListener("click", clickOutsideHandler);
+    };
+  }, [open, clickOutsideToClose, setOpen, refs.content, refs.root, refs.trigger]);
 
   const handleOpen = () => {
     if (trigger === "click") {
@@ -101,7 +121,7 @@ export function useOpenState({
       setOpen(false);
     }
   };
-  const onClick = () => {
+  const onHandle = () => {
     if (!open) {
       window.history.pushState({ open: true }, "");
       setOpen(true);
@@ -130,116 +150,22 @@ export function useOpenState({
     (e: React.KeyboardEvent<HTMLElement>) => e.key === "Enter" && handleOpen();
   };
 
-  useEffectWidthScrollbar({ open, widthHasScrollbar, hasScrollbar, scrollbarWidth, durationClose });
+  useWidthScrollbar({ open, widthHasScrollbar, hasScrollbar, scrollbarWidth, durationClose });
+
+  const dataState = open ? (initialOpen ? "open" : "opened") : "closed";
 
   return {
-    /**
-   * ```js
-   * // usage
-    function Demo() {
-      const {open, ref, handleOpen} = useOpenState();
-
-      return (
-        <>
-          <button onClick={handleOpen}>Open dropdown</button>
-
-          {open && (
-            <Paper ref={ref} shadow="sm">
-              <span>Click outside to close</span>
-            </Paper>
-          )}
-        </>
-      );
-    }
-  * ```
-  * @returns setOpen(false)
-  */
-    ref,
-    /** // sample
-  ```js
-    if (!render) {
-      return null;
-    }
-  ```
-  */
+    refs,
     render,
-    /** @return boolean */
     open,
-    /** ```js
-     * <button
-     *   type="button"
-     *   onClick={() => {
-     *     if (!open) {
-           window.history.pushState({ open: true }, "");
-           }
-           setOpen(!open);
-     *   }}
-     * >
-     * Open
-     * </button>
-     * ``` */
     setOpen,
-    /**
-     * ```js
-    const handleOpen = () => {
-      if (trigger === "click") {
-        if (!open) {
-          window.history.pushState({ open: true }, "");
-        }
-        setOpen(!open);
-      }
-    };
-     * ```
-     */
+    onHandle,
+    handleBack,
     handleOpen,
     handleClose,
-    /**
-     * *Sedikit berbeda dengan handleOpen*
-     */
-    onClick,
-    handleBack,
     onMouseEnter,
     onMouseLeave,
     onKeyDown,
+    dataState,
   };
-}
-
-export function useEffectWidthScrollbar({
-  open,
-  widthHasScrollbar,
-  hasScrollbar,
-  scrollbarWidth,
-  durationClose,
-}: {
-  open: boolean;
-  widthHasScrollbar: boolean;
-  hasScrollbar: boolean;
-  scrollbarWidth: number;
-  durationClose: number;
-}) {
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout | null = null;
-
-    if (open) {
-      if (widthHasScrollbar !== false && hasScrollbar) {
-        setBodyProperty(scrollbarWidth);
-        applyStateEffect(true);
-      }
-    } else {
-      if (widthHasScrollbar !== false && hasScrollbar) {
-        removeBodyProperty();
-        applyStateEffect(false);
-      }
-    }
-
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-      if (widthHasScrollbar !== false && hasScrollbar) {
-        removeBodyProperty();
-        applyStateEffect(false);
-      }
-    };
-  }, [open, durationClose, widthHasScrollbar, hasScrollbar, scrollbarWidth]);
 }
