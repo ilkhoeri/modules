@@ -7,7 +7,6 @@ import { CompoundStylesApiProps } from "../../factory/styles-api.types";
 import { Factory, factory } from "../../factory";
 import { useSpotlightContext } from "./spotlight.context";
 import { spotlightActions } from "./spotlight.store";
-import { cnx } from "../../utils";
 
 import classes from "./spotlight.module.css";
 
@@ -51,7 +50,6 @@ export const SpotlightSearch = factory<SpotlightSearchFactory>((props, ref) => {
     ...others
   } = useProps("SpotlightSearch", defaultProps, props);
   const ctx = useSpotlightContext();
-  
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     onKeyDown?.(event);
@@ -89,10 +87,7 @@ export const SpotlightSearch = factory<SpotlightSearchFactory>((props, ref) => {
   };
 
   return (
-    <div
-      data-spotlight="search-input-wrap"
-      {...ctx.getStyles("searchWrap", { classNames, styles })}
-    >
+    <div data-spotlight="search-input-wrap" {...ctx.getStyles("searchWrap", { classNames, styles })}>
       {leftSection || (
         <svg
           fill="currentColor"
