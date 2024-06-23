@@ -1,3 +1,10 @@
 "use client";
 
-export * from "./web";
+export {
+  Collapsible,
+  CollapsibleProvider,
+  CollapsibleContent,
+  CollapsibleRoot,
+  CollapsibleTrigger,
+  useCollapsibleContext,
+} from "./web/collapsible/collapsible";
