@@ -1,5 +1,5 @@
 import { RefObject, useEffect, useState } from "react";
-import { useHasScrollbar, useWidthScrollbar, useHotkeys, createRefs } from "@/modules/hooks";
+import { useHasScrollbar, useWidthScrollbar, useHotkeys, createRefs } from "@/resource/docs/hooks";
 
 export enum OriginState {
   Root = "root",

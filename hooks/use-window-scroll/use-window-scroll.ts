@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useWindowEvent } from "@/modules/hooks";
+import { useWindowEvent } from "@/resource/docs/hooks";
 
 interface ScrollPosition {
   x: number;

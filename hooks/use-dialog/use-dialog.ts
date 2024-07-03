@@ -1,37 +1,39 @@
 import { useEffect, useState } from "react";
-import { OriginState, createRefs, useRectInfo, type OriginType } from "@/modules/hooks";
-import { RectElement } from "../use-element-info/use-element-info";
+import { OriginState, createRefs, useClickOutside, type OriginType } from "@/resource/docs/hooks";
+import { InitialInfo, RectElement } from "../use-element-info/use-element-info";
 
-export type AlignValuesType = "center" | "start" | "end";
-export type SideValuesType = "top" | "right" | "bottom" | "left";
+export enum AlignValues {
+  start = "start",
+  center = "center",
+  end = "end",
+}
 
-export type IntrinsicUseDialog = {
+export enum SideValues {
+  top = "top",
+  right = "right",
+  bottom = "bottom",
+  left = "left",
+}
+
+export type VALDIALOG = {
   defaultOpen?: boolean;
   open?: boolean;
   setOpen?: (value: boolean) => void;
   clickOutsideToClose?: boolean;
 };
 
-export type DestructureUseDialog = {
-  align?: AlignValuesType;
-  side?: SideValuesType;
+export type DIRDIALOG = {
+  align?: `${AlignValues}`;
+  side?: `${SideValues}`;
   sideOffset?: number;
   info?: Partial<RectElement>;
 };
 
-export interface UseDialogType<T> extends IntrinsicUseDialog, DestructureUseDialog {
+export interface UseDialogType<T> extends VALDIALOG, DIRDIALOG {
   ref?: React.MutableRefObject<T | null>;
 }
 
-export interface DialogContextProps<T> extends UseDialogType<T> {
-  refs: Partial<Record<OriginType, React.MutableRefObject<T | null>>>;
-  render?: boolean;
-  setOpen: (value: boolean) => void;
-  attrData: (as: OriginType) => { [key: string]: string };
-  styles: (as: OriginType) => { [key: string]: string };
-}
-
-export function useDialog<T extends HTMLElement>(Dialog: UseDialogType<T> = {}) {
+export function useDialog<T extends HTMLElement = any>(Dialog: UseDialogType<T> = {}) {
   const {
     ref,
     side = "bottom",
@@ -75,7 +77,9 @@ export function useDialog<T extends HTMLElement>(Dialog: UseDialogType<T> = {}) 
         clearTimeout(timeoutId);
       }
     };
-  }, [open, setRender, clickOutsideToClose]);
+  }, [open, setRender]);
+
+  useClickOutside(() => clickOutsideToClose && setOpen(false), [refs.trigger, refs.content]);
 
   const dataState = open ? (initialOpen ? "open" : "opened") : "closed";
 
@@ -98,7 +102,7 @@ export function useDialog<T extends HTMLElement>(Dialog: UseDialogType<T> = {}) 
     };
     switch (as) {
       case "root":
-        vars["--offset"] = String(`${sideOffset}px`);
+        vars["--offset"] = `${sideOffset}px`;
         setVars("trigger", triggerInfo);
         setVars("content", contentInfo);
         break;
@@ -113,4 +117,44 @@ export function useDialog<T extends HTMLElement>(Dialog: UseDialogType<T> = {}) 
   };
 
   return { refs, styles, triggerInfo, attrData, render, side, align, open, setOpen };
+}
+export function useRectInfo<T extends HTMLElement | null>(
+  element: T | null,
+  { initial: setInitial }: InitialInfo = {},
+) {
+  const defaultInitial: { [key: string]: 0 } = {};
+  const initial = setInitial !== undefined ? setInitial : defaultInitial;
+  const [rectInfo, setRectInfo] = useState<RectElement>(initial as RectElement);
+
+  useEffect(() => {
+    const updateRectElement = () => {
+      if (element) {
+        const rect = element?.getBoundingClientRect();
+        setRectInfo({
+          scrollX: window.scrollX,
+          scrollY: window.scrollY,
+          x: rect.left + window.scrollX,
+          y: rect.top + window.scrollY,
+          width: rect.width,
+          height: rect.height,
+          top: rect.top,
+          bottom: rect.bottom,
+          right: rect.right,
+          left: rect.left,
+        });
+      }
+    };
+
+    updateRectElement();
+
+    window.addEventListener("resize", updateRectElement);
+    window.addEventListener("scroll", updateRectElement);
+
+    return () => {
+      window.removeEventListener("resize", updateRectElement);
+      window.removeEventListener("scroll", updateRectElement);
+    };
+  }, [element, setRectInfo]);
+
+  return rectInfo;
 }

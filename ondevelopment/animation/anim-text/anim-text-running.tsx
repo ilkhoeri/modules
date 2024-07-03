@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 
-import { cnx } from "@/modules/ondevelopment/utils/cnx";
+import { cnx } from "@/resource/docs/ondevelopment/utils/cnx";
 import { useAnimatedRunningWords, type AnimatedRunningWordsType } from "./use-animated-running-words";
 
 import type { AnimTextAllTypes } from "./types-anim-text";
