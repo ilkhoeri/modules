@@ -1,10 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 export type RectInfo = "x" | "y" | "width" | "height" | "top" | "right" | "bottom" | "left" | "scrollX" | "scrollY";
 export type RectElement = Record<RectInfo, number>;
 export type InitialInfo = { initial?: Partial<RectElement> };
 
-export function useElementInfo<T extends HTMLElement | null>({ initial }: InitialInfo = {}) {
+function round(num: number) {
+  return Math.round(num * 100) / 100;
+}
+
+export function useElementInfo<T extends HTMLElement | null>(element?: T | null, { initial }: InitialInfo = {}) {
   const [rect, setRect] = useState<RectElement>({ ...(initial || {}) } as RectElement);
   const [hovered, setHovered] = useState<DOMRect | null>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -12,62 +16,94 @@ export function useElementInfo<T extends HTMLElement | null>({ initial }: Initia
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 
   const ref = useRef<T | null>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
+  const mutationObserverRef = useRef<MutationObserver | null>(null);
+
+  const el = element !== undefined ? element : ref.current;
 
   const updateRectElement = useCallback(() => {
-    if (ref.current) {
-      const rect = ref.current.getBoundingClientRect();
-      setRect({
-        scrollX: window.scrollX,
-        scrollY: window.scrollY,
-        x: rect.left + window.scrollX,
-        y: rect.top + window.scrollY,
-        width: rect.width,
-        height: rect.height,
-        top: rect.top,
-        bottom: rect.bottom,
-        right: rect.right,
-        left: rect.left,
-      });
+    if (el) {
+      const rect = el.getBoundingClientRect();
+      if (rect.width !== 0 && rect.height !== 0) {
+        setRect({
+          scrollX: round(window.scrollX),
+          scrollY: round(window.scrollY),
+          x: round(rect.left + window.scrollX),
+          y: round(rect.top + window.scrollY),
+          width: round(rect.width),
+          height: round(rect.height),
+          top: round(rect.top),
+          bottom: round(rect.bottom),
+          right: round(rect.right),
+          left: round(rect.left),
+        });
+      }
     }
-  }, []);
+  }, [el]);
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrollPosition(ref.current?.scrollTop || 0);
-      updateRectElement();
+      const el = element !== undefined ? element : ref.current;
+      setScrollPosition(el?.scrollTop || 0);
+      requestAnimationFrame(updateRectElement);
     };
 
     const handleScrollBody = () => {
       setScrollBody(document.documentElement.scrollTop);
-      updateRectElement();
+      requestAnimationFrame(updateRectElement);
     };
 
     const handleResize = () => {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-      updateRectElement();
+      requestAnimationFrame(updateRectElement);
     };
 
-    updateRectElement();
+    const observeElement = () => {
+      const el = element !== undefined ? element : ref.current;
+      if (el) {
+        if (!resizeObserverRef.current) {
+          resizeObserverRef.current = new ResizeObserver(updateRectElement);
+        }
+        if (!mutationObserverRef.current) {
+          mutationObserverRef.current = new MutationObserver(() => {
+            requestAnimationFrame(updateRectElement);
+          });
+        }
+
+        resizeObserverRef.current.observe(el);
+        mutationObserverRef.current.observe(el, { attributes: true, childList: true, subtree: true });
+      }
+    };
+
+    const disconnectObservers = () => {
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+        resizeObserverRef.current = null;
+      }
+      if (mutationObserverRef.current) {
+        mutationObserverRef.current.disconnect();
+        mutationObserverRef.current = null;
+      }
+    };
+
+    requestAnimationFrame(updateRectElement);
     handleResize();
+    observeElement();
 
     window.addEventListener("scroll", handleScrollBody);
     window.addEventListener("resize", handleResize);
-    ref.current?.addEventListener("scroll", handleScroll);
-
-    const resizeObserver = new ResizeObserver(updateRectElement);
-    if (ref.current) {
-      resizeObserver.observe(ref.current);
-    }
+    const el = element !== undefined ? element : ref.current;
+    el?.addEventListener("scroll", handleScroll);
 
     return () => {
       window.removeEventListener("scroll", handleScrollBody);
       window.removeEventListener("resize", handleResize);
-      ref.current?.removeEventListener("scroll", handleScroll);
-      if (ref.current) {
-        resizeObserver.unobserve(ref.current);
+      if (el) {
+        el.removeEventListener("scroll", handleScroll);
+        disconnectObservers();
       }
     };
-  }, [updateRectElement]);
+  }, [element, updateRectElement]);
 
   const onMouseEnter = (event: React.MouseEvent<HTMLElement>) => {
     setHovered(event.currentTarget.getBoundingClientRect());

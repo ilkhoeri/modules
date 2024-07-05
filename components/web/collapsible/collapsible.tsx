@@ -1,8 +1,7 @@
 import * as React from "react";
 
-import { useDialog } from "@/resource/docs/hooks/use-dialog/use-dialog";
-import type * as TYPE from "@/resource/docs/hooks/use-dialog/use-dialog";
-
+import { useOpenState, type UseOpenStateType } from "@/resource/docs/hooks/use-open-state/use-open-state";
+import { InferTypes } from "@/modules/utility/cvx/cvx";
 import { twMerge } from "tailwind-merge";
 
 import "./collapsible.css";
@@ -10,7 +9,7 @@ import "./collapsible.css";
 interface CSSProperties extends React.CSSProperties {
   [key: string]: any;
 }
-interface ProviderProps<T> extends TYPE.UseDialogType<T> {
+interface ProviderProps<T> extends UseOpenStateType<T> {
   children: React.ReactNode;
 }
 type StylesType = {
@@ -18,14 +17,7 @@ type StylesType = {
   style?: CSSProperties;
   className?: string;
 };
-type OriginType = "overlay" | "content" | "root" | "trigger";
-export interface DialogContextProps<T> extends TYPE.UseDialogType<T> {
-  refs: Partial<Record<OriginType, React.MutableRefObject<T | null>>>;
-  render?: boolean;
-  setOpen: (value: boolean) => void;
-  attrData: (as: OriginType) => { [key: string]: string };
-  styles: (as: OriginType) => { [key: string]: string };
-}
+export type DialogContextProps<T> = UseOpenStateType<T> & InferTypes<typeof useOpenState>;
 const CollapsibleContext = React.createContext<DialogContextProps<HTMLElement> | undefined>(undefined);
 
 export function useCollapsibleContext<T>(ref: React.ForwardedRef<T>) {
@@ -37,13 +29,13 @@ export function useCollapsibleContext<T>(ref: React.ForwardedRef<T>) {
 }
 
 export function CollapsibleProvider<T extends HTMLElement>({ children, ref, ...props }: ProviderProps<T>) {
-  const state = useDialog<T>({ ref, ...props });
+  const state = useOpenState<T>({ ref, ...props });
   return <CollapsibleContext.Provider value={state}>{children}</CollapsibleContext.Provider>;
 }
 
 const Collapsible = React.forwardRef<
   React.ElementRef<"div">,
-  React.ComponentPropsWithoutRef<"div"> & TYPE.VALDIALOG & TYPE.DIRDIALOG
+  React.ComponentPropsWithoutRef<"div"> & UseOpenStateType<HTMLDivElement>
 >(({ side, align, sideOffset, open, setOpen, clickOutsideToClose, defaultOpen, ...props }, ref) => {
   const rest = { side, align, sideOffset, open, setOpen, clickOutsideToClose, defaultOpen };
   return (
@@ -56,17 +48,16 @@ Collapsible.displayName = "Collapsible";
 
 const CollapsibleRoot = React.forwardRef<React.ElementRef<"div">, React.ComponentPropsWithoutRef<"div"> & StylesType>(
   ({ className, unstyled, style, ...props }, ref) => {
-    const { refs, attrData, styles } = useCollapsibleContext<HTMLDivElement>(ref);
+    const { refs, styleAt } = useCollapsibleContext<HTMLDivElement>(ref);
     return (
       <div
         ref={refs.root as React.RefObject<HTMLDivElement>}
-        {...attrData("root")}
+        {...styleAt("root", { style })}
         className={twMerge(
           !unstyled && "group relative flex h-auto border-0 select-none gap-[--offset]",
           "data-[side=top]:flex-col-reverse data-[side=right]:flex-row data-[side=bottom]:flex-col data-[side=left]:flex-row-reverse data-[align=start]:items-start data-[align=center]:items-center data-[align=end]:items-end",
           className,
         )}
-        style={{ ...styles("root"), ...style }}
         {...props}
       />
     );
@@ -77,19 +68,18 @@ CollapsibleRoot.displayName = "CollapsibleTrigger";
 const CollapsibleTrigger = React.forwardRef<
   React.ElementRef<"button">,
   React.ComponentPropsWithoutRef<"button"> & StylesType
->(({ type = "button", onClick, className, style, unstyled, ...props }, ref) => {
-  const { refs, open, setOpen, attrData, styles } = useCollapsibleContext<HTMLButtonElement>(ref);
+>(({ type = "button", onClick, className, unstyled, style, ...props }, ref) => {
+  const { refs, open, setOpen, styleAt } = useCollapsibleContext<HTMLButtonElement>(ref);
   return (
     <button
       ref={refs.trigger as React.RefObject<HTMLButtonElement>}
       type={type}
-      {...attrData("trigger")}
+      {...styleAt("trigger", { style })}
       className={twMerge(
         !unstyled &&
           "w-full flex flex-nowrap font-medium flex-row items-center justify-between text-sm select-none z-9 rounded-sm py-1",
         className,
       )}
-      style={{ ...styles("trigger"), ...style }}
       onClick={(e) => {
         e.stopPropagation();
         setOpen(!open);
@@ -106,8 +96,8 @@ CollapsibleTrigger.displayName = "CollapsibleTrigger";
 const CollapsibleContent = React.forwardRef<
   React.ElementRef<"div">,
   React.ComponentPropsWithoutRef<"div"> & StylesType
->(({ className, unstyled, style, "aria-disabled": ariaDisabled, ...props }, ref) => {
-  const { refs, render, attrData, open, styles } = useCollapsibleContext<HTMLDivElement>(ref);
+>(({ style, className, unstyled, "aria-disabled": ariaDisabled, ...props }, ref) => {
+  const { refs, render, open, styleAt } = useCollapsibleContext<HTMLDivElement>(ref);
   const rest = { "aria-disabled": ariaDisabled || (open ? "false" : "true"), ...props };
 
   if (!render) {
@@ -116,13 +106,12 @@ const CollapsibleContent = React.forwardRef<
   return (
     <div
       ref={refs.content as React.RefObject<HTMLDivElement>}
-      {...attrData("content")}
+      {...styleAt("content", { style })}
       className={twMerge(
         !unstyled &&
           "relative flex flex-col z-50 min-w-[8rem] overflow-hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-100 data-[state=open]:zoom-in-100 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:data-[side=bottom]:slide-out-to-top-2 data-[state=closed]:data-[side=left]:slide-out-to-right-2 data-[state=closed]:data-[side=right]:slide-out-to-left-2 data-[state=closed]:data-[side=top]:slide-out-to-bottom-2",
         className,
       )}
-      style={{ ...styles("content"), ...style }}
       {...rest}
     />
   );
