@@ -1,8 +1,15 @@
-import { createPortal } from "react-dom";
 import { RefObject, useEffect, useState } from "react";
-import { useHasScrollbar, useWidthScrollbar, useHotkeys, createRefs } from "@/resource/docs/hooks";
-import { useClickOutside } from "../use-click-outside/use-click-outside";
-import { RectElement, useElementInfo } from "../use-element-info/use-element-info";
+import { createPortal } from "react-dom";
+import {
+  useHasScrollbar,
+  useWidthScrollbar,
+  useHotkeys,
+  createRefs,
+  useClickOutside,
+  RectElement,
+  useElementInfo,
+  useHover,
+} from "@/modules/hooks";
 
 export enum DataOrigin {
   Root = "root",
@@ -46,6 +53,7 @@ export type UseOpenStateType<T> = {
   sideOffset?: number;
   hotKeys?: "/" | "M" | "ctrl+J" | "ctrl+K" | "alt+mod+shift+X" | (string & {});
   base?: boolean;
+  touch?: boolean;
 };
 
 export function useOpenState<T extends HTMLElement = any>(OpenState: UseOpenStateType<T> = {}) {
@@ -63,6 +71,7 @@ export function useOpenState<T extends HTMLElement = any>(OpenState: UseOpenStat
     align = "center",
     sideOffset = 0,
     base = false,
+    touch = false,
   } = OpenState;
 
   const [openState, setOpenState] = useState(defaultOpen);
@@ -113,6 +122,11 @@ export function useOpenState<T extends HTMLElement = any>(OpenState: UseOpenStat
     };
   }, [open, durationClose, setRender, clickOutsideToClose]);
 
+  useHover(
+    trigger === "hover" ? refs?.trigger?.current : null,
+    trigger === "hover" ? { open, setOpen, touch } : { open: undefined, setOpen: undefined, touch: undefined },
+  );
+
   useHotkeys([[hotKeys, () => setOpen(!open)]]);
 
   useWidthScrollbar({ open: render, widthHasScrollbar, hasScrollbar, scrollbarWidth, durationClose });
@@ -127,34 +141,26 @@ export function useOpenState<T extends HTMLElement = any>(OpenState: UseOpenStat
       setOpen(!open);
     }
   };
-
-  const handleBack = () => {
-    if (open) {
-      window.history.back();
+  const handleClose = () => {
+    setTimeout(() => {
       setOpen(false);
-    }
+    }, durationClose);
   };
   const onHandle = () => {
     if (!open) {
       window.history.pushState({ open: true }, "");
       setOpen(true);
     } else if (open) {
-      handleBack();
+      window.history.back();
+      setOpen(false);
     }
   };
-
-  const handleClose = () => {
-    setTimeout(() => {
-      setOpen(false);
-    }, durationClose);
-  };
-
-  const onMouseEnter = () => {
+  const onStartEnter = () => {
     if (trigger === "hover") {
       setOpen(true);
     }
   };
-  const onMouseLeave = () => {
+  const onEndLeave = () => {
     if (trigger === "hover") {
       setOpen(false);
     }
@@ -180,11 +186,10 @@ export function useOpenState<T extends HTMLElement = any>(OpenState: UseOpenStat
     setOpen,
     Portal,
     onHandle,
-    handleBack,
     handleOpen,
     handleClose,
-    onMouseEnter,
-    onMouseLeave,
+    onStartEnter,
+    onEndLeave,
     onKeyDown,
     state,
     bounding,
