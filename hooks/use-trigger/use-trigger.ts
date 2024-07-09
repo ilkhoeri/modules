@@ -6,17 +6,16 @@ interface UseTrigger {
   setOpen?: (v: boolean) => void;
   defaultOpen?: boolean;
   delay?: number;
-  depend?: DependencyList;
 }
 
 export function useTrigger<T extends HTMLElement | null>(elements?: Array<T | null>, handle: UseTrigger = {}) {
-  const { popstate = false, open: exOpen, setOpen: exSetOpen, defaultOpen = false, delay = 115, depend } = handle;
+  const { popstate = false, open: exOpen, setOpen: exSetOpen, defaultOpen = false, delay = 115 } = handle;
   const [inOpen, inSetOpen] = useState(defaultOpen);
   const open = exOpen !== undefined ? exOpen : inOpen;
   const setOpen = exSetOpen !== undefined ? exSetOpen : inSetOpen;
   const [initialOpen, setInitialOpen] = useState(false);
 
-  const render = useRender(open, delay, depend);
+  const render = useRender(open, delay);
 
   const ref = useRef<T>(null);
 
@@ -26,24 +25,19 @@ export function useTrigger<T extends HTMLElement | null>(elements?: Array<T | nu
     }
   }, [open, defaultOpen]);
 
-  const toggle = useCallback(
-    (e: MouseEvent) => {
-      e.stopPropagation();
-      e.preventDefault();
-      if (popstate) {
-        if (!open) {
-          window.history.pushState({ open: true }, "");
-          setOpen(true);
-        } else {
-          window.history.back();
-          setOpen(false);
-        }
+  const toggle = useCallback(() => {
+    if (popstate) {
+      if (!open) {
+        window.history.pushState({ open: true }, "");
+        setOpen(true);
       } else {
-        setOpen(!open);
+        window.history.back();
+        setOpen(false);
       }
-    },
-    [popstate, open, setOpen],
-  );
+    } else {
+      setOpen(!open);
+    }
+  }, [popstate, open, setOpen]);
 
   usePopState(popstate, { open, setOpen });
 
@@ -89,7 +83,7 @@ export function useTrigger<T extends HTMLElement | null>(elements?: Array<T | nu
     };
   }, [elements, attachListeners, detachListeners]);
 
-  return { ref, render, open, setOpen, initialOpen };
+  return { ref, render, open, setOpen, initialOpen, toggle };
 }
 
 export function useRender(open: boolean, delay: number = 125, depend?: DependencyList) {
