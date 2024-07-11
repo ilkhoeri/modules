@@ -1,7 +1,6 @@
 import { RefObject, useCallback } from "react";
 import { createPortal } from "react-dom";
 import {
-  useFixed,
   useHotkeys,
   createRefs,
   useClickOutside,
@@ -85,10 +84,11 @@ export function useOpenState<T extends HTMLElement = any>(OpenState: UseOpenStat
     setOpen,
     initialOpen,
     ref: handleRef,
-  } = useTrigger<T>(trigger === "click" ? [refs?.trigger?.current] : undefined, {
+  } = useTrigger<T>({
     delay,
     popstate,
     defaultOpen,
+    modal,
     open: trigger === "click" ? openChange : undefined,
     setOpen: trigger === "click" ? onOpenChange : undefined,
   });
@@ -104,8 +104,6 @@ export function useOpenState<T extends HTMLElement = any>(OpenState: UseOpenStat
   };
 
   useHotkeys([[hotKeys, () => setOpen(!open)]]);
-
-  useFixed(render, { modal, delay });
 
   useClickOutside(() => clickOutsideToClose && setOpen(false), [refs.trigger, refs.content]);
 
