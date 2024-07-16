@@ -54,12 +54,11 @@ export { useOrientation } from "./use-orientation/use-orientation";
 export { useReload } from "./use-reload/use-reload";
 export { usePWAInstaller } from "./use-pwa-installer/use-pwa-installer";
 export { useElementInfo } from "./use-element-info/use-element-info";
-export { useScrollArea, type UseScrollAreaType } from "./use-scroll-area/use-scroll-area";
 
 export type { HotkeyItem, Hotkey, HotkeyItemOptions, KeyboardModifiers } from "./use-hotkeys/use-hotkeys";
 export type { InitialInfo, RectElement, RectInfo } from "./use-element-info/use-element-info";
 export type { UseMediaQueryOptions } from "./use-media-query/use-media-query";
 export type { UseMovePosition } from "./use-move/use-move";
-export type { UseOpenStateType } from "./use-open-state/use-open-state";
+export type { OpenStateOptions, ClickStateOptions, HoverStateOptions } from "./use-open-state/use-open-state";
 export type { PaginationParams } from "./use-pagination/use-pagination";
 export type { StateHistory, UseStateHistoryHandlers } from "./use-state-history/use-state-history";
