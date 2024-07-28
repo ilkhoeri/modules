@@ -57,10 +57,11 @@ const TooltipContent = React.forwardRef<React.ElementRef<"div">, TooltipContentT
       <ctx.Portal render={ctx.render}>
         <div
           ref={mergeRefs(ctx.refs.content, ref)}
-          {...{className: twMerge(!unstyled && classes({ side }), className), ...ctx.styleAt("content", { style })}}
+          {...{ className: twMerge(!unstyled && classes({ side }), className), ...ctx.styleAt("content", { style }) }}
           {...rest}
         >
-          {children}{withArrow && <ArrowDropdownIcon data-side={side} data-align={align} className={arrow()} />}
+          {children}
+          {withArrow && <ArrowDropdownIcon data-side={side} data-align={align} className={arrow()} />}
         </div>
       </ctx.Portal>
     );
@@ -99,6 +100,7 @@ const classes = cvx({
     },
   },
 });
+
 const arrow = cvx({
   assign:
     "w-[23px] h-[9px] absolute text-background [&_[data-arrow=border]]:text-border data-[align=center]:data-[side=top]:inset-x-auto data-[align=center]:data-[side=bottom]:inset-x-auto data-[align=center]:data-[side=right]:inset-y-auto data-[align=center]:data-[side=left]:inset-y-auto data-[align=start]:data-[side=top]:left-2 data-[align=start]:data-[side=bottom]:left-2 data-[align=start]:data-[side=right]:top-4 data-[align=start]:data-[side=left]:top-4 data-[align=end]:data-[side=top]:right-2 data-[align=end]:data-[side=bottom]:right-2 data-[align=end]:data-[side=right]:bottom-4 data-[align=end]:data-[side=left]:bottom-4 data-[side=top]:rotate-0 data-[side=top]:top-[calc(var(--content-h)-2px)] data-[side=right]:rotate-90 data-[side=right]:right-[calc(var(--content-w)-9px)] data-[side=bottom]:rotate-180 data-[side=bottom]:bottom-[calc(var(--content-h)-2px)] data-[side=left]:-rotate-90 data-[side=left]:left-[calc(var(--content-w)-9px)]",
