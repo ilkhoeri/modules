@@ -1,8 +1,12 @@
-import { Svg, type SvgProps } from "../components/web/svg/svg";
+import { Svg, type SvgProps } from "../components/web/svg";
 
 export const GoogleIcon = ({ ...props }: SvgProps) => {
   return (
-    <Svg strokeWidth="0" version="1" enableBackground="new 0 0 24 24" {...props}>
+    <Svg
+      strokeWidth="0"
+      version="1"
+      enableBackground="new 0 0 24 24"
+      {...props}>
       <path
         fill="#ffc107"
         d="m23.77,9.65h-.97v-.05h-10.8v4.8h6.78c-.99,2.79-3.65,4.8-6.78,4.8-3.98,0-7.2-3.22-7.2-7.2s3.22-7.2,7.2-7.2c1.84,0,3.51.69,4.78,1.82l3.39-3.39c-2.14-2-5.01-3.23-8.17-3.23C5.37,0,0,5.37,0,12s5.37,12,12,12,12-5.37,12-12c0-.8-.08-1.59-.23-2.35Z"

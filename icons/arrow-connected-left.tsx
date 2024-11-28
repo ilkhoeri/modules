@@ -1,4 +1,4 @@
-import { Svg, type SvgProps } from "../components/web/svg/svg";
+import { Svg, type SvgProps } from "../components/web/svg";
 
 export const ArrowConnectedLeftIcon = ({ ...props }: SvgProps) => {
   return (

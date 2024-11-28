@@ -1,10 +1,13 @@
-import { Svg, type SvgProps } from "../components/web/svg/svg";
+import { Svg, type SvgProps } from "../components/web/svg";
 
 export const ArrowsSquareIcon = ({
   arrow = "top",
   square = true,
   ...props
-}: SvgProps & { arrow: "top" | "right" | "bottom" | "left"; square?: boolean }) => {
+}: SvgProps & {
+  arrow: "top" | "right" | "bottom" | "left";
+  square?: boolean;
+}) => {
   let chevron: string | undefined;
   let line: string | undefined;
   switch (arrow) {
@@ -32,7 +35,12 @@ export const ArrowsSquareIcon = ({
     <Svg {...props}>
       <path d={chevron} />
       <path d={line} />
-      {square && <path d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z" data-d="square" />}
+      {square && (
+        <path
+          d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z"
+          data-d="square"
+        />
+      )}
     </Svg>
   );
 };

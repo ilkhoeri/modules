@@ -1,41 +1,45 @@
-## ioeri modular modules
+# oeri modular modules
 
-Origin folders
+### Origin files
+
 ```
   modules
   ├── components
   │   ├── web
-  │   │   ├── named
-  │   │   │   ├── named.tsx
-  │   │   │   ├── named.css
-  │   │   │   └── named.mdx
-  │   │   │
-  │   │   └── // others...
+  │   │   ├── file-1.tsx
+  │   │   ├── file-1.css
+  │   │   ├── file-2.tsx
+  │   │   ├── file-3.tsx
+  │   │   └── others...
   │   │
   │   ├── mobile
-  │   │   ├── named
-  │   │   │   ├── named.tsx
-  │   │   │   └── named.mdx
-  │   │   │
-  │   │   └── // others...
+  │   │   ├── file-1.tsx
+  │   │   ├── file-2.ts
+  │   │   ├── file-3.ts
+  │   │   └── others...
   │   │
-  │   └── // end...
-  │
+  │   └── end...
   │
   ├── hooks
-  │   ├── named
-  │   │   ├── named.ts
-  │   │   └── named.mdx
-  │   │
-  │   └── // others...
+  │   ├── file-1.ts
+  │   ├── file-1.css
+  │   ├── file-2.ts
+  │   ├── file-3.tsx
+  │   └── others...
+  │
+  │
+  ├── icons
+  │   ├── file-1.tsx
+  │   ├── file-2.tsx
+  │   ├── file-3.tsx
+  │   └── others...
   │
   │
   ├── utility
-  │   ├── named
-  │   │   ├── named.ts
-  │   │   └── named.mdx
-  │   │
-  │   └── // others...
+  │   ├── file-1.ts
+  │   ├── file-2.ts
+  │   ├── file-3.tsx
+  │   └── others...
   │
-  └── // others...
+  └── others...
 ```

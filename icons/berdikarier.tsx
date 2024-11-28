@@ -1,11 +1,16 @@
-import { Svg, type SvgProps } from "../components/web/svg/svg";
+import { Svg, type SvgProps } from "../components/web/svg";
 
-export const BerdikarierIcon = ({ strokeWidth = "0", stroke = "none", fill = "currentColor", ...props }: SvgProps) => {
+export const BerdikarierIcon = ({
+  strokeWidth = "0",
+  stroke = "none",
+  fill = "currentColor",
+  ...props
+}: SvgProps) => {
   const rest = {
     strokeWidth,
     stroke,
     fill,
-    ...props,
+    ...props
   };
   return (
     <Svg {...rest}>

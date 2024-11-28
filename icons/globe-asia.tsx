@@ -1,4 +1,4 @@
-import { Svg, type SvgProps } from "../components/web/svg/svg";
+import { Svg, type SvgProps } from "../components/web/svg";
 
 export const GlobeAsiaIcon = ({
   stroke = "currentColor",
@@ -10,7 +10,7 @@ export const GlobeAsiaIcon = ({
     stroke,
     fill,
     strokeWidth,
-    ...props,
+    ...props
   };
   return (
     <Svg {...rest}>

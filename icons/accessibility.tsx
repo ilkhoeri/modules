@@ -1,4 +1,4 @@
-import { Svg, type SvgProps } from "../components/web/svg/svg";
+import { Svg, type SvgProps } from "../components/web/svg";
 
 export const AccessibilityIcon = ({
   fill = "currentColor",
@@ -6,9 +6,8 @@ export const AccessibilityIcon = ({
   strokeWidth = "0",
   ...props
 }: SvgProps) => {
-  const rest = { fill, stroke, strokeWidth, ...props };
   return (
-    <Svg {...rest}>
+    <Svg {...{ fill, stroke, strokeWidth, ...props }}>
       <path
         strokeWidth={0}
         stroke="none"

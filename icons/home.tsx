@@ -1,6 +1,10 @@
-import { Svg, type SvgProps } from "../components/web/svg/svg";
+import { Svg, type SvgProps } from "../components/web/svg";
 
-export const HomeIcon = ({ strokeWidth = 0.25, fill = "currentColor", ...props }: SvgProps) => {
+export const HomeIcon = ({
+  strokeWidth = 0.25,
+  fill = "currentColor",
+  ...props
+}: SvgProps) => {
   return (
     <Svg strokeWidth={strokeWidth} fill={fill} {...props}>
       <path

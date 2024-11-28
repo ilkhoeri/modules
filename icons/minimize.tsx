@@ -1,4 +1,4 @@
-import { Svg, type SvgProps } from "../components/web/svg/svg";
+import { Svg, type SvgProps } from "../components/web/svg";
 
 export const MinimizeIcon = ({ ...props }: SvgProps) => {
   return (

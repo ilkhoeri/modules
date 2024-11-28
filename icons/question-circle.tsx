@@ -1,4 +1,4 @@
-import { Svg, type SvgProps } from "../components/web/svg/svg";
+import { Svg, type SvgProps } from "../components/web/svg";
 
 export const QuestionCircleIcon = ({
   fill = "currentColor",
@@ -10,7 +10,7 @@ export const QuestionCircleIcon = ({
     fill,
     stroke,
     strokeWidth,
-    ...props,
+    ...props
   };
   return (
     <Svg {...rest}>

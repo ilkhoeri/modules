@@ -1,8 +1,6 @@
-export * from "../components/web/svg/svg";
+export * from "../components/web/svg";
 
-export { IoeriIcon } from "./ioeri";
-export { IoeriLogoTextIcon } from "./ioeri-logo-text";
-export { IoeriTextIcon } from "./ioeri-text";
+export { OeriIcon } from "./oeri";
 export { AccessibilityIcon } from "./accessibility";
 export { AddressBookIcon } from "./address-book";
 export { AlertTriangleIcon } from "./alert-triangle";

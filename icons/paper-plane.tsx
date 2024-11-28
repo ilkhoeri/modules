@@ -1,6 +1,11 @@
-import { Svg, type SvgProps } from "../components/web/svg/svg";
+import { Svg, type SvgProps } from "../components/web/svg";
 
-export const PaperPlaneIcon = ({ fill = "currentColor", stroke = "none", strokeWidth = 0, ...props }: SvgProps) => {
+export const PaperPlaneIcon = ({
+  fill = "currentColor",
+  stroke = "none",
+  strokeWidth = 0,
+  ...props
+}: SvgProps) => {
   const rest = { fill, stroke, strokeWidth, ...props };
   return (
     <Svg {...rest}>

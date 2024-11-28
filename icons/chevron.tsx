@@ -1,9 +1,11 @@
-import { Svg, type SvgProps } from "../components/web/svg/svg";
+import { Svg, type SvgProps } from "../components/web/svg";
 
 export const ChevronIcon = ({
   chevron,
   ...props
-}: SvgProps & { chevron: "up" | "right" | "down" | "left" | "up-down" | "left-right" }) => {
+}: SvgProps & {
+  chevron: "up" | "right" | "down" | "left" | "up-down" | "left-right";
+}) => {
   let d: string | undefined;
   let dd: string | undefined;
   switch (chevron) {

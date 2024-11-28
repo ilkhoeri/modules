@@ -1,4 +1,4 @@
-import type { SvgProps } from "../components/web/svg/svg";
+import type { SvgProps } from "../components/web/svg";
 
 export const ArrowDropdownIcon = ({
   fill = "currentColor",
