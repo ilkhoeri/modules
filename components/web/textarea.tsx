@@ -8,7 +8,10 @@ export interface TextareaProps
 }
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  function Textarea({ unstyled, className, ...props }, ref) {
+  function Textarea(
+    { unstyled, className, spellCheck = false, ...props },
+    ref
+  ) {
     const onInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
       event.currentTarget.style.height = "auto";
       event.currentTarget.style.height = `${event.currentTarget.scrollHeight + 2}px`;
@@ -22,7 +25,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         {...{
           ref,
           onInput,
-          spellCheck: false,
+          spellCheck,
           className: cn(
             {
               "flex min-h-20 w-full max-w-full resize-y rounded-md border border-border bg-background p-3 py-2 text-sm leading-snug ring-offset-background scrollbar placeholder:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2f81f7] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-base":

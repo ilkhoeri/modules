@@ -98,16 +98,17 @@ TableCaption.displayName = "TableCaption";
 const variants = cvx({
   variants: {
     selector: {
-      div: "relative border border-border rounded-lg w-full min-w-full max-w-full overflow-x-auto [scrollbar-color:#adb3bd_#0000] [scrollbar-width:thin] [scrollbar-gutter:auto]",
-      table: "w-max min-w-full max-w-max caption-bottom text-sm",
+      div: "relative border border-border rounded-lg w-full min-w-full max-w-full overflow-x-auto [scrollbar-color:#adb3bd_#0000] [scrollbar-width:thin] [scrollbar-gutter:auto] [&>table]:min-w-full [&>table]:max-w-max",
+      table:
+        "w-max caption-bottom text-sm [&:where(:not([data-table=scroll-area])>table)]:max-w-full",
       thead:
         "relative after:content-[''] after:absolute after:w-full after:h-px after:bg-border after:inset-x-0 after:bottom-[3px]",
       tbody:
         "last:border-b-0 [&_tr:last-child]:border-0 hover:[&_tr]:bg-muted/55 data-[state=active]:[&_tr]:bg-muted/55",
       tfoot: "bg-muted font-medium",
       tr: "border-b appearance-none relative",
-      th: "pl-3 pr-0.5 first:pl-4 font-mono last:pr-4 max-w-[264px] py-[10px] h-12 text-left font-medium align-middle text-color [&:has([role=checkbox])]:pr-0",
-      td: "pl-3 pr-0.5 first:pl-4 font-mono last:pr-4 max-w-[264px] py-4",
+      th: "pl-3 pr-3 first:pl-4 last:pr-4 py-[10px] font-mono h-12 text-left font-medium align-middle text-color [&:has([role=checkbox])]:pr-0",
+      td: "pl-3 pr-3 first:pl-4 last:pr-4 py-4 font-mono [&:where(:not([data-table=scroll-area])_td)]:align-text-top",
       caption: "mt-4 text-sm text-muted-foreground"
     }
   }

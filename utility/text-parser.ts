@@ -194,6 +194,23 @@ export function splitWordsToArray(words: string) {
   }));
 }
 
+// Function to convert type to JSON-like string
+export function typeToJson<T extends object>(example: T): string {
+  const typeRepresentation = JSON.stringify(
+    Object.keys(example).reduce(
+      (acc, key) => {
+        acc[key] = typeof (example as any)[key];
+        return acc;
+      },
+      {} as Record<string, string>
+    ),
+    null,
+    2
+  );
+
+  return typeRepresentation;
+}
+
 export const htmlCharacterEntities = [
   { char: "<", entity: "&lt;" },
   { char: ">", entity: "&gt;" },
