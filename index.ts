@@ -1,6 +1,6 @@
 export * from "./components/web";
 export * from "./types";
-export * from "./icons";
+export * from "./icons/icons";
 export * from "./utility";
 
 // hooks

@@ -1,6 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const CalendarDaysIcon = ({ ...props }: SvgProps) => {
+export function Icon({ ...props }: SvgProps) {
   return (
     <Svg {...props}>
       <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
@@ -15,4 +15,4 @@ export const CalendarDaysIcon = ({ ...props }: SvgProps) => {
       <path d="M16 18h.01" />
     </Svg>
   );
-};
+}

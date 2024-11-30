@@ -66,65 +66,83 @@ const defaultProps: Partial<CommandContentProps> = {
   modal: true
 };
 
-// prettier-ignore
-export const CommandContent = factory<CommandContentFactory>((_props, ref) => {
-  const props = useProps("CommandContent", defaultProps, _props);
-  const { vars, store, modal, style, styles, variant, shortcut, unstyled, children, disabled, className, classNames, defaultOpen, tagsToIgnore, onCommandOpen, onQueryChange, onCommandClose, query: baseQuery, clearQueryOnClose, closeOnActionTrigger, triggerOnContentEditable, ...others } = props;
-  if (process.env.NODE_ENV !== "production") {
-    console.log("Command Content Unused", [vars, variant])
+export const CommandContent = factory<CommandContentFactory>(
+  function CommandContent(_props, ref) {
+    const props = useProps("CommandContent", defaultProps, _props);
+    // prettier-ignore
+    const { vars, store, modal, style, styles, variant, shortcut, unstyled, children, disabled, className, classNames, defaultOpen, tagsToIgnore, onCommandOpen, onQueryChange, onCommandClose, query: baseQuery, clearQueryOnClose, closeOnActionTrigger, triggerOnContentEditable, ...others } = props;
+    if (process.env.NODE_ENV !== "production") {
+      console.log("Command Content Unused", [vars, variant]);
+    }
+
+    const { open, query: storeQuery } = useCommand(store!);
+    const query = baseQuery || storeQuery;
+    const render = useRender(open, { modal });
+    const setQuery = (q: string) => {
+      onQueryChange?.(q);
+      commandActions.setQuery(q, store!);
+    };
+
+    // prettier-ignore
+    const getStyles = useStyles<CommandContentFactory>({
+      name: "command", props, style, styles, unstyled, className, classNames,
+      // @ts-ignore
+      classes,
+      ...others
+    });
+
+    useHotkeys(
+      getHotkeys(shortcut, store!),
+      tagsToIgnore,
+      triggerOnContentEditable
+    );
+
+    useDidUpdate(() => {
+      if (open) onCommandOpen?.();
+      else onCommandClose?.();
+    }, [open]);
+
+    const onClose = () => {
+      commandActions.close(store!);
+      if (clearQueryOnClose) setQuery("");
+      commandActions.clearCommandState(
+        { clearQuery: clearQueryOnClose },
+        store!
+      );
+    };
+
+    const attrs: Record<string, string | undefined> = {
+      "data-modal": !modal ? "false" : undefined,
+      "data-state": defaultOpen ? "opened" : open ? "open" : "closed"
+    };
+    const rest = { ...others, ...attrs };
+
+    if (typeof document === "undefined" || !(render || defaultOpen) || disabled)
+      return null;
+
+    const content = (
+      <CommandProvider
+        value={{
+          setQuery,
+          query,
+          store: store!,
+          closeOnActionTrigger,
+          getStyles
+        }}>
+        <div
+          onClick={onClose}
+          {...getStyles("overlay", { classNames, styles })}
+          {...attrs}
+        />
+        <div
+          ref={ref}
+          {...getStyles("content", { className, classNames, style, styles })}
+          {...rest}>
+          {children}
+        </div>
+      </CommandProvider>
+    );
+
+    return modal ? createPortal(content, document.body) : content;
   }
-
-  const { open, query: storeQuery } = useCommand(store!);
-  const query = baseQuery || storeQuery;
-  const render = useRender(open, { modal });
-  const setQuery = (q: string) => {
-    onQueryChange?.(q);
-    commandActions.setQuery(q, store!);
-  };
-
-  const getStyles = useStyles<CommandContentFactory>({
-    name: "command",
-    props,
-    style,
-    styles,
-    unstyled,
-    className,
-    classNames,
-    // @ts-ignore
-    classes,
-    ...others,
-  });
-
-  useHotkeys(getHotkeys(shortcut, store!), tagsToIgnore, triggerOnContentEditable);
-
-  useDidUpdate(() => {
-    if (open)onCommandOpen?.()
-    else onCommandClose?.();
-
-  }, [open]);
-
-  const onClose = () => {
-    commandActions.close(store!);
-    if (clearQueryOnClose) setQuery("");
-    commandActions.clearCommandState({ clearQuery: clearQueryOnClose }, store!);
-  };
-
-  const attrs: Record<string, string | undefined> = {
-    "data-modal": !modal ? "false" : undefined,
-    "data-state": defaultOpen ? "opened" : open ? "open" : "closed",
-  };
-  const rest = { ...others, ...attrs };
-
-  if (typeof document === "undefined" || !(render || defaultOpen) || disabled) return null;
-
-  const content = (
-    <CommandProvider value={{ setQuery, query, store: store!, closeOnActionTrigger, getStyles }}>
-      <div onClick={onClose} {...getStyles("overlay", { classNames, styles })} {...attrs} />
-      <div ref={ref} {...getStyles("content", { className, classNames, style, styles })} {...rest}>
-        {children}
-      </div>
-    </CommandProvider>
-  );
-
-  return modal ? createPortal(content, document.body) : content;
-});
+);

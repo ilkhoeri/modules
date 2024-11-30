@@ -1,6 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const ClipboardListIcon = ({ ...props }: SvgProps) => {
+export function Icon({ ...props }: SvgProps) {
   return (
     <Svg {...props}>
       <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
@@ -11,4 +11,4 @@ export const ClipboardListIcon = ({ ...props }: SvgProps) => {
       <path d="M13 16l2 0" />
     </Svg>
   );
-};
+}

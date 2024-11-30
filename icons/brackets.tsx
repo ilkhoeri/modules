@@ -1,6 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const BracketsIcon = ({ ...props }: SvgProps) => {
+export function Icon({ ...props }: SvgProps) {
   return (
     <Svg {...props}>
       <path d="M9 12h6" />

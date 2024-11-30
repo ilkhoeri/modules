@@ -1,6 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const ClipboardEditIcon = ({ ...props }: SvgProps) => {
+export function Icon({ ...props }: SvgProps) {
   return (
     <Svg {...props}>
       <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
@@ -9,4 +9,4 @@ export const ClipboardEditIcon = ({ ...props }: SvgProps) => {
       <path d="M4 13.5V6a2 2 0 0 1 2-2h2" />
     </Svg>
   );
-};
+}

@@ -24,18 +24,26 @@ export type CommandFooterFactory = Factory<{
 
 const defaultProps: Partial<CommandFooterProps> = {};
 
-export const CommandFooter = factory<CommandFooterFactory>((props, ref) => {
-  const { id, className, classNames, style, styles, ...others } = useProps(
-    "CommandFooter",
-    defaultProps,
-    props
-  );
-  const ctx = useCommandContext();
-  return (
-    <div
-      ref={ref}
-      {...ctx.getStyles("footer", { id, className, classNames, style, styles })}
-      {...others}
-    />
-  );
-});
+export const CommandFooter = factory<CommandFooterFactory>(
+  function CommandFooter(props, ref) {
+    const { id, className, classNames, style, styles, ...others } = useProps(
+      "CommandFooter",
+      defaultProps,
+      props
+    );
+    const ctx = useCommandContext();
+    return (
+      <div
+        ref={ref}
+        {...ctx.getStyles("footer", {
+          id,
+          className,
+          classNames,
+          style,
+          styles
+        })}
+        {...others}
+      />
+    );
+  }
+);

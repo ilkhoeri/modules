@@ -1,10 +1,10 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const HomeIcon = ({
+export function Icon({
   strokeWidth = 0.25,
   fill = "currentColor",
   ...props
-}: SvgProps) => {
+}: SvgProps) {
   return (
     <Svg strokeWidth={strokeWidth} fill={fill} {...props}>
       <path
@@ -14,4 +14,4 @@ export const HomeIcon = ({
       />
     </Svg>
   );
-};
+}

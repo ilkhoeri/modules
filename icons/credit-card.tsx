@@ -1,6 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const CreditCardIcon = ({ ...props }: SvgProps) => {
+export function Icon({ ...props }: SvgProps) {
   return (
     <Svg {...props}>
       <path d="M3 5m0 3a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3z" />
@@ -9,4 +9,4 @@ export const CreditCardIcon = ({ ...props }: SvgProps) => {
       <path d="M11 15l2 0" />
     </Svg>
   );
-};
+}

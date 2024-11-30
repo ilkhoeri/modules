@@ -1,6 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const LineMenuBarIcon = ({ ...props }: SvgProps) => {
+export function Icon({ ...props }: SvgProps) {
   return (
     <Svg currentFill="fill" {...props}>
       <path
@@ -17,4 +17,4 @@ export const LineMenuBarIcon = ({ ...props }: SvgProps) => {
       />
     </Svg>
   );
-};
+}

@@ -32,87 +32,69 @@ const defaultProps: Partial<CommandSearchProps> = {
   size: 32
 };
 
-export const CommandSearch = factory<CommandSearchFactory>((props, ref) => {
-  const {
-    id,
-    size,
-    value,
-    style,
-    styles,
-    onChange,
-    unstyled,
-    onKeyDown,
-    className,
-    classNames,
-    leftSection,
-    rightSection,
-    type = "text",
-    autoFocus = true,
-    onCompositionEnd,
-    onCompositionStart,
-    spellCheck = "false",
-    autoComplete = "off",
-    placeholder = "Search...",
-    ...others
-  } = useProps("CommandSearch", defaultProps, props);
-  const [composition, setComposition] = React.useState(false);
-  const ctx = useCommandContext();
-  if (process.env.NODE_ENV !== "production") {
-    console.log("Command Search Unused", [size, unstyled]);
+export const CommandSearch = factory<CommandSearchFactory>(
+  function CommandSearch(props, ref) {
+    // prettier-ignore
+    const { id, size, value, style, styles, onChange, unstyled, onKeyDown, className, classNames, leftSection, rightSection, type = "text", autoFocus = true, onCompositionEnd, onCompositionStart, spellCheck = "false", autoComplete = "off", placeholder = "Search...", ...others } = useProps("CommandSearch", defaultProps, props);
+    const [composition, setComposition] = React.useState(false);
+    const ctx = useCommandContext();
+    if (process.env.NODE_ENV !== "production") {
+      console.log("CommandSearch Unused", [size, unstyled]);
+    }
+
+    const rest = {
+      ref,
+      type,
+      autoFocus,
+      spellCheck,
+      placeholder,
+      autoComplete,
+      value: value ?? ctx.query,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        ctx.setQuery(e.currentTarget.value);
+        onChange?.(e);
+      },
+      onCompositionStart: (e: React.CompositionEvent<HTMLInputElement>) => {
+        onCompositionStart?.(e);
+        setComposition(true);
+      },
+      onCompositionEnd: (e: React.CompositionEvent<HTMLInputElement>) => {
+        onCompositionEnd?.(e);
+        setComposition(false);
+      },
+      onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
+        onKeyDown?.(e);
+        if (composition) return;
+
+        if (e.nativeEvent.code === "ArrowDown") {
+          e.preventDefault();
+          commandActions.selectNextAction(ctx.store);
+        }
+        if (e.nativeEvent.code === "ArrowUp") {
+          e.preventDefault();
+          commandActions.selectPreviousAction(ctx.store);
+        }
+        if (
+          e.nativeEvent.code === "Enter" ||
+          e.nativeEvent.code === "NumpadEnter"
+        ) {
+          e.preventDefault();
+          commandActions.triggerSelectedAction(ctx.store);
+        }
+      },
+      ...ctx.getStyles("search", { id, className, classNames, style, styles }),
+      ...others
+    };
+
+    return (
+      <div {...ctx.getStyles("searchWrap", { classNames, styles })}>
+        <LeftSection leftSection={leftSection} />
+        <input {...rest} />
+        {rightSection}
+      </div>
+    );
   }
-
-  const rest = {
-    ref,
-    type,
-    autoFocus,
-    spellCheck,
-    placeholder,
-    autoComplete,
-    value: value ?? ctx.query,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      ctx.setQuery(e.currentTarget.value);
-      onChange?.(e);
-    },
-    onCompositionStart: (e: React.CompositionEvent<HTMLInputElement>) => {
-      onCompositionStart?.(e);
-      setComposition(true);
-    },
-    onCompositionEnd: (e: React.CompositionEvent<HTMLInputElement>) => {
-      onCompositionEnd?.(e);
-      setComposition(false);
-    },
-    onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
-      onKeyDown?.(e);
-      if (composition) return;
-
-      if (e.nativeEvent.code === "ArrowDown") {
-        e.preventDefault();
-        commandActions.selectNextAction(ctx.store);
-      }
-      if (e.nativeEvent.code === "ArrowUp") {
-        e.preventDefault();
-        commandActions.selectPreviousAction(ctx.store);
-      }
-      if (
-        e.nativeEvent.code === "Enter" ||
-        e.nativeEvent.code === "NumpadEnter"
-      ) {
-        e.preventDefault();
-        commandActions.triggerSelectedAction(ctx.store);
-      }
-    },
-    ...ctx.getStyles("search", { id, className, classNames, style, styles }),
-    ...others
-  };
-
-  return (
-    <div {...ctx.getStyles("searchWrap", { classNames, styles })}>
-      <LeftSection leftSection={leftSection} />
-      <input {...rest} />
-      {rightSection}
-    </div>
-  );
-});
+);
 
 function LeftSection({ leftSection }: { leftSection: React.ReactNode }) {
   if (leftSection) return leftSection;

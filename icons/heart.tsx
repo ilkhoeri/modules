@@ -1,6 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const HeartIcon = ({ ...props }: SvgProps) => {
+export function Icon({ ...props }: SvgProps) {
   return (
     <Svg {...props}>
       <path
@@ -10,4 +10,4 @@ export const HeartIcon = ({ ...props }: SvgProps) => {
       />
     </Svg>
   );
-};
+}

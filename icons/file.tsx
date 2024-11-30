@@ -1,9 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const FileIcon = ({
-  arrow,
-  ...props
-}: SvgProps & { arrow?: boolean }) => {
+export function Icon({ arrow, ...props }: SvgProps & { arrow?: boolean }) {
   return (
     <Svg {...props}>
       <path d="M14 3v4a1 1 0 0 0 1 1h4" />
@@ -16,4 +13,4 @@ export const FileIcon = ({
       )}
     </Svg>
   );
-};
+}

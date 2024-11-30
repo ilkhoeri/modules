@@ -1,6 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const RefreshWatchIcon = ({ ...props }: SvgProps) => {
+export function Icon({ ...props }: SvgProps) {
   return (
     <Svg {...props}>
       <g data-g="watch">
@@ -13,4 +13,4 @@ export const RefreshWatchIcon = ({ ...props }: SvgProps) => {
       </g>
     </Svg>
   );
-};
+}

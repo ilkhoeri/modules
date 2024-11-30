@@ -1,6 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const RefreshAlertIcon = ({ ...props }: SvgProps) => {
+export function Icon({ ...props }: SvgProps) {
   return (
     <Svg {...props}>
       <g data-g="exclamation-mark">
@@ -13,4 +13,4 @@ export const RefreshAlertIcon = ({ ...props }: SvgProps) => {
       </g>
     </Svg>
   );
-};
+}

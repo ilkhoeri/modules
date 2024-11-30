@@ -1,11 +1,11 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const ChevronIcon = ({
-  chevron,
+export function Icon({
+  chevron = "up",
   ...props
 }: SvgProps & {
-  chevron: "up" | "right" | "down" | "left" | "up-down" | "left-right";
-}) => {
+  chevron?: "up" | "right" | "down" | "left" | "up-down" | "left-right";
+}) {
   let d: string | undefined;
   let dd: string | undefined;
   switch (chevron) {
@@ -38,4 +38,4 @@ export const ChevronIcon = ({
       {dd && <path d={dd} />}
     </Svg>
   );
-};
+}

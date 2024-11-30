@@ -1,6 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const RouteScanIcon = ({ ...props }: SvgProps) => {
+export function Icon({ ...props }: SvgProps) {
   return (
     <Svg {...props}>
       <path d="M4 8v-2a2 2 0 0 1 2 -2h2" />
@@ -13,4 +13,4 @@ export const RouteScanIcon = ({ ...props }: SvgProps) => {
       <path d="M17 9l-4.414 4.414a2 2 0 0 0 -.586 1.414v2.172" />
     </Svg>
   );
-};
+}

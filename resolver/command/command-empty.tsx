@@ -24,20 +24,28 @@ export type CommandEmptyFactory = Factory<{
 
 const defaultProps: Partial<CommandEmptyProps> = {};
 
-export const CommandEmpty = factory<CommandEmptyFactory>((props, ref) => {
-  const { id, className, classNames, style, styles, ...others } = useProps(
-    "CommandEmpty",
-    defaultProps,
-    props
-  );
+export const CommandEmpty = factory<CommandEmptyFactory>(
+  function CommandEmpty(props, ref) {
+    const { id, className, classNames, style, styles, ...others } = useProps(
+      "CommandEmpty",
+      defaultProps,
+      props
+    );
 
-  const ctx = useCommandContext();
+    const ctx = useCommandContext();
 
-  return (
-    <div
-      ref={ref}
-      {...ctx.getStyles("empty", { id, classNames, styles, className, style })}
-      {...others}
-    />
-  );
-});
+    return (
+      <div
+        ref={ref}
+        {...ctx.getStyles("empty", {
+          id,
+          classNames,
+          styles,
+          className,
+          style
+        })}
+        {...others}
+      />
+    );
+  }
+);

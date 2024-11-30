@@ -1,13 +1,13 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const ArrowsSquareIcon = ({
+export function Icon({
   arrow = "top",
   square = true,
   ...props
 }: SvgProps & {
-  arrow: "top" | "right" | "bottom" | "left";
+  arrow?: "top" | "right" | "bottom" | "left";
   square?: boolean;
-}) => {
+}) {
   let chevron: string | undefined;
   let line: string | undefined;
   switch (arrow) {
@@ -43,4 +43,4 @@ export const ArrowsSquareIcon = ({
       )}
     </Svg>
   );
-};
+}

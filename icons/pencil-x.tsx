@@ -1,6 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const PencilXIcon = ({ ...props }: SvgProps) => {
+export function Icon({ ...props }: SvgProps) {
   return (
     <Svg {...props}>
       <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
@@ -9,4 +9,4 @@ export const PencilXIcon = ({ ...props }: SvgProps) => {
       <path d="M17 22l5 -5" />
     </Svg>
   );
-};
+}

@@ -1,14 +1,13 @@
 import type { SvgProps } from "../components/web/svg";
 
-export const ArrowDropdownIcon = ({
+export function Icon({
   fill = "currentColor",
   viewBox = "0 0 15 6",
   strokeWidth = 0,
   ...props
-}: SvgProps) => {
-  const rest = { fill, viewBox, strokeWidth, ...props };
+}: SvgProps) {
   return (
-    <svg {...rest}>
+    <svg {...{ fill, viewBox, strokeWidth, ...props }}>
       <path d="m.7.4c.4,0,.8.2,1.1.5l4,4.1c.5.5,1.1.7,1.7.7s1.2-.2,1.7-.7L13.2.9c.3-.3.7-.5,1.1-.5s.4-.2.4-.4H.3c0,.2.2.4.4.4Z" />
       <path
         data-arrow="border"
@@ -16,4 +15,4 @@ export const ArrowDropdownIcon = ({
       />
     </svg>
   );
-};
+}

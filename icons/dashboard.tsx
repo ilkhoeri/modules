@@ -1,14 +1,13 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const DashboardIcon = ({
+export function Icon({
   fill = "currentColor",
   stroke = "none",
   strokeWidth = "0",
   ...props
-}: SvgProps) => {
-  const rest = { fill, stroke, strokeWidth, ...props };
+}: SvgProps) {
   return (
-    <Svg {...rest}>
+    <Svg {...{ fill, stroke, strokeWidth, ...props }}>
       <path
         strokeWidth={0}
         d="m16.6,10.2c.2.6.4,1.2.4,1.8,0,.9-.3,1.8-.7,2.5,0,0,0,.2,0,.3l1.1,1.1s.1,0,.2,0,0,0,0,0c0,0,.1,0,.2-.1,1.4-2.1,1.6-4.8.4-7.1,0,0-.1-.1-.2-.1h0c0,0-.1,0-.2,0l-1.1,1.1c0,0,0,.2,0,.3Z"
@@ -27,4 +26,4 @@ export const DashboardIcon = ({
       />
     </Svg>
   );
-};
+}

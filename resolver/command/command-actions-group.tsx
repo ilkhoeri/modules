@@ -28,7 +28,7 @@ export type CommandActionsGroupFactory = Factory<{
 const defaultProps: Partial<CommandActionsGroupProps> = {};
 
 export const CommandActionsGroup = factory<CommandActionsGroupFactory>(
-  (props, ref) => {
+  function CommandActionsGroup(props, ref) {
     const {
       id,
       className,

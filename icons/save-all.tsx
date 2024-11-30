@@ -1,6 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const SaveAllIcon = ({ ...props }: SvgProps) => {
+export function Icon({ ...props }: SvgProps) {
   return (
     <Svg {...props}>
       <path d="M6 4a2 2 0 0 1 2-2h10l4 4v10.2a2 2 0 0 1-2 1.8H8a2 2 0 0 1-2-2Z" />
@@ -9,4 +9,4 @@ export const SaveAllIcon = ({ ...props }: SvgProps) => {
       <path d="M18 22H4a2 2 0 0 1-2-2V6" />
     </Svg>
   );
-};
+}

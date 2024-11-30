@@ -1,16 +1,15 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const EmptyBoxIcon = ({
+export function Icon({
   strokeWidth = 1,
   color = "currentColor",
   viewBox = "0 0 64 41",
   width = 64,
   height = 41,
   ...props
-}: SvgProps) => {
-  const rest = { strokeWidth, viewBox, width, height, ...props };
+}: SvgProps) {
   return (
-    <Svg {...rest}>
+    <Svg {...{ strokeWidth, viewBox, width, height, ...props }}>
       <path
         d="m42,.5h-20c-1.2,0-2.3.5-3,1.4l-10,11.4v9.2h46v-9.2L45,1.9c-.8-.9-1.9-1.4-3-1.4Z"
         fill="none"
@@ -29,4 +28,4 @@ export const EmptyBoxIcon = ({
       />
     </Svg>
   );
-};
+}

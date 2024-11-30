@@ -1,6 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const AreaCodeIcon = ({ ...props }: SvgProps) => {
+export function Icon({ ...props }: SvgProps) {
   return (
     <Svg {...props} data-icon="area-code">
       <path d="m18,18c1.66,0,3-1.34,3-3V7c0-1.66-1.34-3-3-3H6c-1.66,0-3,1.34-3,3v8c0,1.66,1.34,3,3,3" />

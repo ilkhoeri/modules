@@ -1,6 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const TrashBinIcon = ({ ...props }: SvgProps) => {
+export function Icon({ ...props }: SvgProps) {
   return (
     <Svg {...props}>
       <path d="M4 7l16 0" />
@@ -10,4 +10,4 @@ export const TrashBinIcon = ({ ...props }: SvgProps) => {
       <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
     </Svg>
   );
-};
+}

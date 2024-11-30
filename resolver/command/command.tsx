@@ -61,19 +61,10 @@ const defaultProps: Partial<CommandProps> = {
   shortcut: "mod + K"
 };
 
-export const Command = factory<CommandType>((_props, ref) => {
+export const Command = factory<CommandType>(function Command(_props, ref) {
   const props = useProps("Command", defaultProps, _props);
-  const {
-    searchProps,
-    filter,
-    query,
-    onQueryChange,
-    actions,
-    nothingFound,
-    highlightQuery,
-    limit,
-    ...others
-  } = props;
+  // prettier-ignore
+  const { searchProps, filter, query, onQueryChange, actions, nothingFound, highlightQuery, limit, ...others } = props;
 
   const [_query, setQuery] = useUncontrolled({
     value: query,

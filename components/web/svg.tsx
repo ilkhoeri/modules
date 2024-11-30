@@ -38,7 +38,7 @@ export enum InitialSize {
 
 export type IconType = (props: DetailedSvg) => JSX.Element;
 export interface SvgProps
-  extends Omit<DetailedSvg, "children" | "currentFill"> {
+  extends Omit<DetailedSvg, "children" | "currentFill" | "ratio"> {
   ref?: React.Ref<SVGSVGElement>;
 }
 export type Sizes = `${InitialSize}` | (string & {}) | number | undefined;

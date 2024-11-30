@@ -1,6 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const BookOpenIcon = ({ ...props }: SvgProps) => {
+export function Icon({ ...props }: SvgProps) {
   return (
     <Svg {...props}>
       <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
@@ -10,4 +10,4 @@ export const BookOpenIcon = ({ ...props }: SvgProps) => {
       <path d="M21 6l0 13" />
     </Svg>
   );
-};
+}

@@ -1,6 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const ThumbIcon = ({ ...props }: SvgProps) => {
+export function Icon({ ...props }: SvgProps) {
   return (
     <Svg {...props}>
       <path
@@ -13,4 +13,4 @@ export const ThumbIcon = ({ ...props }: SvgProps) => {
       />
     </Svg>
   );
-};
+}

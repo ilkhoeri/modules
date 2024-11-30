@@ -170,9 +170,9 @@ export function kebabToCamelCase(words: string): string {
 
 export function toPascalCase(words: string) {
   return words
-    .split("-") // Splitting strings based on hyphens
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Change the first letter of each word to uppercase
-    .join(""); // Rejoin words without hyphens
+    .split("-")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join("");
 }
 
 export function formatedProgress(input: string | undefined) {

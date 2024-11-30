@@ -1,6 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const MapPin2Icon = ({ ...props }: SvgProps) => {
+export function Icon({ ...props }: SvgProps) {
   return (
     <Svg {...props}>
       <path d="m9,9.05c0,1.66,1.34,3,3,3s3-1.34,3-3-1.34-3-3-3-3,1.34-3,3" />
@@ -8,4 +8,4 @@ export const MapPin2Icon = ({ ...props }: SvgProps) => {
       <path d="m20.78,15.67c.9.72,1.42,1.58,1.42,2.46,0,2.66-4.56,4.82-10.2,4.82S1.8,20.79,1.8,18.13c0-.88.52-1.74,1.42-2.46" />
     </Svg>
   );
-};
+}

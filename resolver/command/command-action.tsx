@@ -161,7 +161,7 @@ export const CommandHighlight = React.forwardRef<
   HTMLParagraphElement,
   {
     text: string;
-    highlight: string;
+    highlight?: string;
     style?: React.CSSProperties & {
       [key: string]: any;
     };
@@ -172,20 +172,22 @@ export const CommandHighlight = React.forwardRef<
     >,
     "children"
   >
->(({ text, highlight, ...props }, ref) => {
-  const lowerTitle = text.toLowerCase();
-  const lowerQuery = highlight.toLowerCase();
-  const startIndex = lowerTitle.indexOf(lowerQuery);
-  const endIndex = startIndex + lowerQuery.length;
-  const before = text.slice(0, startIndex);
-  const match = text.slice(startIndex, endIndex);
-  const after = text.slice(endIndex);
-
+>(function CommandHighlight({ text, highlight = "", ...props }, ref) {
+  const getHighlightedText = (text: string, highlight: string) => {
+    if (!highlight.trim()) return [text];
+    const regex = new RegExp(`(${highlight})`, "gi");
+    return text.split(regex);
+  };
+  const parts = getHighlightedText(text, highlight);
   return (
     <p ref={ref} {...props}>
-      {before}
-      <mark>{match}</mark>
-      {after}
+      {parts.map((part, index) =>
+        part.toLowerCase() === highlight.toLowerCase() ? (
+          <mark key={index}>{part}</mark>
+        ) : (
+          part
+        )
+      )}
     </p>
   );
 });

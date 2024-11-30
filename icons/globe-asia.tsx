@@ -1,19 +1,13 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const GlobeAsiaIcon = ({
+export function Icon({
   stroke = "currentColor",
   fill = "currentColor",
   strokeWidth = "0",
   ...props
-}: SvgProps) => {
-  const rest = {
-    stroke,
-    fill,
-    strokeWidth,
-    ...props
-  };
+}: SvgProps) {
   return (
-    <Svg {...rest}>
+    <Svg {...{ stroke, fill, strokeWidth, ...props }}>
       <path d="M15.75 8.25a.75.75 0 0 1 .75.75c0 1.12-.492 2.126-1.27 2.812a.75.75 0 1 1-.992-1.124A2.243 2.243 0 0 0 15 9a.75.75 0 0 1 .75-.75Z" />
       <path
         fillRule="evenodd"
@@ -22,4 +16,4 @@ export const GlobeAsiaIcon = ({
       />
     </Svg>
   );
-};
+}

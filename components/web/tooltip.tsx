@@ -1,189 +1,161 @@
-"use client";
 import * as React from "react";
-import { twMerge } from "tailwind-merge";
-import { ArrowDropdownIcon } from "@/modules/icons";
-import { cvx, InferTypes } from "str-merge";
-import { HoverOpenOptions, useOpenState } from "@/hooks/use-open-state";
-import { createSafeContext } from "@/hooks/open-state-context";
-import { mergeRefs } from "@/hooks/use-merged-ref";
+import { createPortal } from "react-dom";
+import * as Primitive from "@radix-ui/react-tooltip";
+import { cn } from "str-merge";
 
-type SharedType = {
-  unstyled?: boolean;
-  style?: React.CSSProperties & { [key: string]: any };
-  className?: string;
+type TooltipOrigin = "trigger" | "content";
+type KeyType = "side" | "align" | "sideOffset";
+interface CSSProperties extends React.CSSProperties {
+  [key: string]: any;
+}
+type StylesNames<T extends string> = {
+  classNames?: Partial<Record<T, string>>;
+  styles?: Partial<Record<T, CSSProperties>>;
+  style?: CSSProperties;
 };
-type TooltipContextValue = HoverOpenOptions &
-  InferTypes<typeof useOpenState> & { withArrow?: boolean; touch?: boolean };
-type TooltipTriggerType = React.ComponentPropsWithoutRef<"button"> &
-  SharedType & { asChild?: boolean };
-type TooltipContentType = React.ComponentPropsWithoutRef<"div"> & SharedType;
+type TooltipProps = Omit<Primitive.TooltipTriggerProps, "content"> & {
+  touch?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  disableHoverableContent?: boolean;
+  delayDuration?: number;
+  defaultOpen?: boolean;
+  skipDelayDuration?: number;
+  content?: React.ReactNode;
+  withArrow?: boolean;
+  contentProps?: Omit<Primitive.TooltipContentProps, KeyType>;
+} & Pick<Primitive.TooltipContentProps, KeyType> &
+  StylesNames<TooltipOrigin>;
 
-const [Provider, useTooltipContext] = createSafeContext<TooltipContextValue>(
-  "Tooltip component trees must be wrap within an <Tooltip>"
-);
+const TooltipProvider = Primitive.Provider;
 
-const TooltipProvider = (
-  props: HoverOpenOptions & {
-    children: React.ReactNode;
-    withArrow?: boolean;
-    touch?: boolean;
-  }
-) => {
-  const { withArrow, sideOffset, touch, ...rest } = props;
-  const ctx = useOpenState({
-    trigger: "hover",
-    sideOffset: withArrow ? Number(sideOffset) + 9 : sideOffset,
-    observe: {
-      touch,
-      align: true,
-      side: true,
-      sideswipe: true,
-      offset: true,
-      contentRect: true
-    },
-    ...rest
-  });
-  return (
-    <Provider value={{ withArrow, sideOffset, touch, ...rest, ...ctx }}>
-      {props.children}
-    </Provider>
-  );
-};
+const TooltipRoot = Primitive.Root;
 
 const TooltipTrigger = React.forwardRef<
-  React.ElementRef<"button">,
-  TooltipTriggerType
->(function ({ type = "button", asChild, style, children, ...props }, ref) {
-  const ctx = useTooltipContext();
-  const rest = { ref: mergeRefs(ctx.refs.trigger, ref), type, ...props };
-  const child = React.Children.only(children as React.ReactElement);
-
-  return asChild ? (
-    React.cloneElement(child, {
-      ...rest,
-      ...ctx.styleAt("trigger", { style: { ...style, ...child.props.style } }),
-      className: twMerge(child.props.className, props.className)
-    })
-  ) : (
-    <button {...ctx.styleAt("trigger", { style })} {...rest}>
-      {children}
-    </button>
-  );
+  React.ElementRef<typeof Primitive.Trigger>,
+  Primitive.TooltipTriggerProps & { touch?: boolean }
+>(function TooltipTrigger({ touch, ...props }, ref) {
+  console.log("touch: is", touch);
+  return <Primitive.Trigger {...{ ref, ...props }} />;
 });
-TooltipTrigger.displayName = "TooltipTrigger";
+TooltipTrigger.displayName = Primitive.TooltipTrigger.displayName;
 
 const TooltipContent = React.forwardRef<
-  React.ElementRef<"div">,
-  TooltipContentType
->(function (
-  {
-    style,
-    className,
-    children,
-    unstyled,
-    "aria-disabled": ariaDisabled,
-    role = "tooltip",
-    ...props
-  },
+  React.ElementRef<typeof Primitive.Content>,
+  Primitive.TooltipContentProps & { withArrow?: boolean }
+>(function TooltipContent(
+  { className, sideOffset = 4, children, withArrow, align, side, ...props },
   ref
 ) {
-  const { withArrow, align, side, ...ctx } = useTooltipContext();
-  const rest = {
-    "aria-disabled": ariaDisabled || (ctx.open ? "false" : "true"),
-    role,
-    ...props
-  };
+  if (typeof document === "undefined") return null;
+  return createPortal(
+    <Primitive.Content
+      {...{
+        ref,
+        align,
+        side,
+        sideOffset: withArrow ? Number(sideOffset) + 9 : sideOffset,
+        className: cn(
+          "group/content relative z-50 flex items-center justify-center rounded-md border bg-background px-3 py-1.5 text-sm text-muted-foreground shadow-md animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 [&_[data-tooltip]]:text-background",
+          className
+        ),
+        ...props
+      }}>
+      {children}
 
-  return (
-    <ctx.Portal render={ctx.render}>
-      <div
-        ref={mergeRefs(ctx.refs.content, ref)}
-        {...{
-          className: twMerge(!unstyled && classes({ side }), className),
-          ...ctx.styleAt("content", { style })
-        }}
-        {...rest}>
-        {children}
-        {withArrow && (
-          <ArrowDropdownIcon
-            data-side={side}
-            data-align={align}
-            className={arrow()}
+      {withArrow && (
+        <svg
+          fill="currentColor"
+          viewBox="0 0 15 6"
+          strokeWidth="0"
+          data-side={side}
+          data-align={align}
+          data-tooltip="arrow"
+          className={arrow}>
+          <path d="m.7.4c.4,0,.8.2,1.1.5l4,4.1c.5.5,1.1.7,1.7.7s1.2-.2,1.7-.7L13.2.9c.3-.3.7-.5,1.1-.5s.4-.2.4-.4H.3c0,.2.2.4.4.4Z" />
+          <path
+            data-arrow="border"
+            d="m12.9.6l-4,4.1c-.8.8-2,.8-2.8,0L2.1.6c-.4-.4-.9-.6-1.4-.6h-.7c0,.4.3.7.7.7s.7.1.9.4l4,4.1c.5.5,1.2.8,1.9.8s1.4-.3,1.9-.8L13.4,1.1c.2-.2.6-.4.9-.4S15,.4,15,0h-.7C13.8,0,13.3.2,12.9.6Z"
           />
-        )}
-      </div>
-    </ctx.Portal>
+        </svg>
+      )}
+    </Primitive.Content>,
+    document.body
   );
 });
-TooltipContent.displayName = "TooltipContent";
+TooltipContent.displayName = Primitive.Content.displayName;
 
-type TooltipType = Omit<TooltipTriggerType, "content"> &
-  HoverOpenOptions & {
-    touch?: boolean;
-    withArrow?: boolean;
-    content?: React.ReactNode;
-    contentProps?: React.DetailedHTMLProps<
-      React.HTMLAttributes<HTMLDivElement>,
-      HTMLDivElement
-    > &
-      SharedType;
-  };
-const Tooltip = React.forwardRef<React.ElementRef<"button">, TooltipType>(
-  function (_props, ref) {
-    const {
-      content,
-      contentProps,
-      open,
-      onOpenChange,
-      sideOffset,
-      withArrow,
-      touch,
-      align,
-      side,
-      delay,
-      ...props
-    } = _props;
-    return (
-      <TooltipProvider
+const Tooltip = React.forwardRef<
+  React.ElementRef<typeof Primitive.Trigger>,
+  TooltipProps
+>(function Tooltip(_props, ref) {
+  const {
+    open,
+    onOpenChange,
+    defaultOpen,
+    delayDuration = 0,
+    disableHoverableContent,
+    content,
+    contentProps,
+    sideOffset,
+    skipDelayDuration,
+    className,
+    classNames,
+    style,
+    styles,
+    withArrow,
+    touch,
+    align = "center",
+    side = "bottom",
+    ...props
+  } = _props;
+  return (
+    <TooltipProvider {...{ skipDelayDuration }}>
+      <TooltipRoot
         {...{
           open,
           onOpenChange,
-          sideOffset,
-          withArrow,
-          touch,
-          align,
-          side,
-          delay
+          defaultOpen,
+          delayDuration,
+          disableHoverableContent
         }}>
-        <TooltipTrigger ref={ref} {...props} />
+        <TooltipTrigger
+          {...{
+            ref,
+            touch,
+            className: cn(className, classNames?.trigger),
+            style: { ...style, ...styles?.trigger },
+            ...props
+          }}
+        />
         {content && (
-          <TooltipContent {...contentProps}>{content}</TooltipContent>
+          <TooltipContent
+            {...{
+              side,
+              align,
+              sideOffset,
+              withArrow,
+              className: cn(classNames?.content, contentProps?.className),
+              style: { ...styles?.content, ...contentProps?.style }
+            }}
+            {...contentProps}>
+            {content}
+          </TooltipContent>
         )}
-      </TooltipProvider>
-    );
-  }
-);
+      </TooltipRoot>
+    </TooltipProvider>
+  );
+});
 Tooltip.displayName = "Tooltip";
 
-const classes = cvx({
-  assign:
-    "group absolute min-w-max z-20 text-[13px] rounded-md border bg-background text-popover-foreground shadow-md outline-none focus-visible:ring-0 flex items-center justify-center py-1 px-2 w-max max-w-max transition-opacity [transition-duration:200ms] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-200 data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:zoom-in-100 data-[state=closed]:zoom-out-95 top-[--top] left-[--left]",
-  variants: {
-    side: {
-      top: "data-[side=top]:slide-in-from-bottom-0 data-[side=top]:data-[state=closed]:slide-out-to-bottom-0",
-      right:
-        "data-[side=right]:slide-in-from-left-0 data-[side=right]:data-[state=closed]:slide-out-to-left-0",
-      bottom:
-        "data-[side=bottom]:slide-in-from-top-0 data-[side=bottom]:data-[state=closed]:slide-out-to-top-0",
-      left: "data-[side=left]:slide-in-from-right-0 data-[side=left]:data-[state=closed]:slide-out-to-right-0"
-    }
-  }
-});
+const arrow = cn(
+  "absolute !h-[9px] !w-[23px] group-data-[align=center]/content:group-data-[side=bottom]/content:inset-x-auto group-data-[align=center]/content:group-data-[side=left]/content:inset-y-auto group-data-[align=center]/content:group-data-[side=right]/content:inset-y-auto group-data-[align=center]/content:group-data-[side=top]/content:inset-x-auto group-data-[align=end]/content:group-data-[side=bottom]/content:right-2 group-data-[align=end]/content:group-data-[side=left]/content:bottom-4 group-data-[align=end]/content:group-data-[side=right]/content:bottom-4 group-data-[align=end]/content:group-data-[side=top]/content:right-2 group-data-[align=start]/content:group-data-[side=bottom]/content:left-2 group-data-[align=start]/content:group-data-[side=left]/content:top-4 group-data-[align=start]/content:group-data-[side=right]/content:top-4 group-data-[align=start]/content:group-data-[side=top]/content:left-2 group-data-[side=bottom]/content:bottom-[calc(100%-0px)] group-data-[side=left]/content:left-[calc(100%-7px)] group-data-[side=right]/content:right-[calc(100%-7px)] group-data-[side=top]/content:top-[calc(100%-0px)] group-data-[side=bottom]/content:rotate-180 group-data-[side=left]/content:-rotate-90 group-data-[side=right]/content:rotate-90 group-data-[side=top]/content:rotate-0 [&_[data-arrow=border]]:text-border"
+);
 
-const arrow = cvx({
-  assign:
-    "w-[23px] h-[9px] absolute text-background [&_[data-arrow=border]]:text-border data-[align=center]:data-[side=top]:inset-x-auto data-[align=center]:data-[side=bottom]:inset-x-auto data-[align=center]:data-[side=right]:inset-y-auto data-[align=center]:data-[side=left]:inset-y-auto data-[align=start]:data-[side=top]:left-2 data-[align=start]:data-[side=bottom]:left-2 data-[align=start]:data-[side=right]:top-4 data-[align=start]:data-[side=left]:top-4 data-[align=end]:data-[side=top]:right-2 data-[align=end]:data-[side=bottom]:right-2 data-[align=end]:data-[side=right]:bottom-4 data-[align=end]:data-[side=left]:bottom-4 data-[side=top]:rotate-0 data-[side=top]:top-[calc(var(--content-h)-2px)] data-[side=right]:rotate-90 data-[side=right]:right-[calc(var(--content-w)-9px)] data-[side=bottom]:rotate-180 data-[side=bottom]:bottom-[calc(var(--content-h)-2px)] data-[side=left]:-rotate-90 data-[side=left]:left-[calc(var(--content-w)-9px)]",
-  variants: {}
-});
-
-export { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent };
+export {
+  Tooltip,
+  TooltipRoot,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider
+};

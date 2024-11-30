@@ -1,11 +1,11 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const AccessibilityIcon = ({
+export function Icon({
   fill = "currentColor",
   stroke = "none",
   strokeWidth = "0",
   ...props
-}: SvgProps) => {
+}: SvgProps) {
   return (
     <Svg {...{ fill, stroke, strokeWidth, ...props }}>
       <path
@@ -22,4 +22,4 @@ export const AccessibilityIcon = ({
       />
     </Svg>
   );
-};
+}

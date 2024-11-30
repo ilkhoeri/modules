@@ -11,14 +11,45 @@ body[data-scroll="active"] * *,
   cursor: grab;
 }
 .scroll-area-content::-webkit-scrollbar {
-  width: 0px;
-  height: 0px;
-  border-radius: 9999px;
+  display: none;
 }
 .scroll-area-content::-webkit-scrollbar-track {
   background: #0000;
+  display: none;
 }
 .scroll-area-content::-webkit-scrollbar-thumb {
   background: #0000;
-  border-radius: 9999px;
+  display: none;
+}
+/* For browsers that support `scrollbar-*` properties */
+@supports (scrollbar-color: auto) {
+  .scroll-area-content {
+    scrollbar-color: #0000 #0000;
+  }
+  .scroll-area-content::-webkit-scrollbar {
+    display: none;
+  }
+  .scroll-area-content::-webkit-scrollbar-track {
+    background: #0000;
+    display: none;
+  }
+  .scroll-area-content::-webkit-scrollbar-thumb {
+    background: #0000;
+    display: none;
+  }
+}
+
+/* Otherwise, use `::-webkit-scrollbar-*` pseudo-elements */
+@supports selector(::-webkit-scrollbar) {
+  .scroll-area-content::-webkit-scrollbar {
+    display: none;
+  }
+  .scroll-area-content::-webkit-scrollbar-track {
+    background: #0000;
+    display: none;
+  }
+  .scroll-area-content::-webkit-scrollbar-thumb {
+    background: #0000;
+    display: none;
+  }
 }

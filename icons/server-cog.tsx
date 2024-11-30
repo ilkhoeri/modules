@@ -1,6 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const ServerCogIcon = ({ ...props }: SvgProps) => {
+export function Icon({ ...props }: SvgProps) {
   return (
     <Svg {...props}>
       <g data-d="server">
@@ -20,4 +20,4 @@ export const ServerCogIcon = ({ ...props }: SvgProps) => {
       </g>
     </Svg>
   );
-};
+}

@@ -1,6 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const TimelineEventIcon = ({ ...props }: SvgProps) => {
+export function Icon({ ...props }: SvgProps) {
   return (
     <Svg {...props}>
       <path d="M12 20m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
@@ -11,4 +11,4 @@ export const TimelineEventIcon = ({ ...props }: SvgProps) => {
       <path d="M9 9h3" />
     </Svg>
   );
-};
+}

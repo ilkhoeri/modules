@@ -1,6 +1,6 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const SocialIcon = ({ ...props }: SvgProps) => {
+export function Icon({ ...props }: SvgProps) {
   return (
     <Svg {...props}>
       <path d="M12 5m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
@@ -12,4 +12,4 @@ export const SocialIcon = ({ ...props }: SvgProps) => {
       <path d="M17.3 17.8l-2.8 -2" />
     </Svg>
   );
-};
+}

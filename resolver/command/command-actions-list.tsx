@@ -29,7 +29,7 @@ export type CommandActionsListFactory = Factory<{
 const defaultProps: Partial<CommandActionsListProps> = {};
 
 export const CommandActionsList = factory<CommandActionsListFactory>(
-  (props, ref) => {
+  function CommandActionsList(props, ref) {
     const {
       id,
       className,

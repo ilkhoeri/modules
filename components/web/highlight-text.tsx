@@ -11,7 +11,7 @@ type StylesNames<T extends string> = {
 };
 type Props = StylesNames<"text" | "highlight"> & {
   text: string;
-  highlight: string;
+  highlight?: string;
   el?: React.ElementType;
 } & Omit<
     React.DetailedHTMLProps<
@@ -26,7 +26,7 @@ export const HighlightText = React.forwardRef<HTMLParagraphElement, Props>(
     {
       el = "p",
       text,
-      highlight,
+      highlight = "",
       className,
       classNames,
       style,
@@ -37,13 +37,13 @@ export const HighlightText = React.forwardRef<HTMLParagraphElement, Props>(
   ) {
     const P = el as React.ElementType;
 
-    const lowerTitle = text.toLowerCase();
-    const lowerQuery = highlight.toLowerCase();
-    const startIndex = lowerTitle.indexOf(lowerQuery);
-    const endIndex = startIndex + lowerQuery.length;
-    const before = text.slice(0, startIndex);
-    const match = text.slice(startIndex, endIndex);
-    const after = text.slice(endIndex);
+    const getHighlightedText = (text: string, highlight: string) => {
+      if (!highlight.trim()) return [text];
+      const regex = new RegExp(`(${highlight})`, "gi"); // Case-insensitive regex.
+      return text.split(regex);
+    };
+
+    const parts = getHighlightedText(text, highlight);
 
     return (
       <P
@@ -53,15 +53,20 @@ export const HighlightText = React.forwardRef<HTMLParagraphElement, Props>(
           style: { ...style, ...styles?.text },
           ...props
         }}>
-        {before}
-        <mark
-          {...{
-            className: classNames?.text,
-            style: styles?.highlight
-          }}>
-          {match}
-        </mark>
-        {after}
+        {parts.map((part, index) =>
+          part.toLowerCase() === highlight.toLowerCase() ? (
+            <mark
+              key={index}
+              {...{
+                className: classNames?.highlight,
+                style: styles?.highlight
+              }}>
+              {part}
+            </mark>
+          ) : (
+            part // Part without highlight.
+          )
+        )}
       </P>
     );
   }

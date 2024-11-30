@@ -1,9 +1,8 @@
 import { Svg, type SvgProps } from "../components/web/svg";
 
-export const MoonStarIcon = ({ strokeWidth = "0", ...props }: SvgProps) => {
-  const rest = { strokeWidth, ...props };
+export function Icon({ strokeWidth = "0", ...props }: SvgProps) {
   return (
-    <Svg {...rest} data-initial="icon-theme-sync">
+    <Svg {...{ strokeWidth, ...props }} data-initial="icon-theme-sync">
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -12,4 +11,4 @@ export const MoonStarIcon = ({ strokeWidth = "0", ...props }: SvgProps) => {
       />
     </Svg>
   );
-};
+}
