@@ -3,9 +3,7 @@ import { Svg, type SvgProps } from "../components/web/svg";
 export function Icon({ ...props }: SvgProps) {
   return (
     <Svg {...props}>
-      <path d="M13 12h-10" />
-      <path d="M6 15l-3 -3l3 -3" />
-      <path d="M17 12a2 2 0 1 1 4 0a2 2 0 0 1 -4 0z" />
+      <path d="m13.11,11.99H2m3.33,3.34l-3.33-3.33,3.33-3.33m12.23,3.32c0-1.23.99-2.22,2.22-2.22s2.22.99,2.22,2.22-.99,2.22-2.22,2.22-2.22-.99-2.22-2.22Z" />
     </Svg>
   );
 }

@@ -147,5 +147,5 @@ export function useHotkeys(
     document.documentElement.addEventListener("keydown", keydownListener);
     return () =>
       document.documentElement.removeEventListener("keydown", keydownListener);
-  }, [hotkeys, tagsToIgnore, triggerOnContentEditable]);
+  }, [hotkeys]);
 }

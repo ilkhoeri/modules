@@ -32,8 +32,8 @@ type RatingStarsProps = StylesNames<"wrap" | "span" | "icon"> & {
 export const RatingStars = React.forwardRef<HTMLDivElement, RatingStarsProps>(
   function RatingStars(
     {
-      totalStars = 5,
       rating = 0,
+      totalStars = 5,
       onRatingChange,
       className,
       classNames,
@@ -62,7 +62,8 @@ export const RatingStars = React.forwardRef<HTMLDivElement, RatingStarsProps>(
           ),
           style: { ...style, ...styles?.wrap },
           ...props
-        }}>
+        }}
+      >
         {[...Array(totalStars)].map((_, index) => (
           <span
             key={index}
@@ -77,9 +78,11 @@ export const RatingStars = React.forwardRef<HTMLDivElement, RatingStarsProps>(
               style: styles?.span
             }}
             onClick={() => handleRating(index + 1)}
-            data-rating={index + 1 <= isRating ? "active" : undefined}>
+            data-rating={index + 1 <= isRating ? "active" : undefined}
+          >
             <svg
-              viewBox="0 0 576 512"
+              viewBox="0 0 24 24"
+              stroke="none"
               xmlns="http://www.w3.org/2000/svg"
               {...{
                 className: cn(
@@ -90,8 +93,9 @@ export const RatingStars = React.forwardRef<HTMLDivElement, RatingStarsProps>(
                   classNames?.icon
                 ),
                 style: styles?.icon
-              }}>
-              <path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z" />
+              }}
+            >
+              <path d="m22.94,9.39c-.15-.48-.57-.83-1.07-.9l-5.98-.88-2.68-5.49c-.22-.46-.69-.75-1.2-.75,0,0,0,0,0,0s0,0,0,0c-.51,0-.97.29-1.2.75l-2.68,5.49-5.98.88c-.5.07-.92.42-1.07.9-.15.48-.03,1,.33,1.36l4.34,4.28-1.02,6.05c-.08.5.12,1,.54,1.3.41.29.96.33,1.41.1l5.34-2.84,5.34,2.84c.45.24,1,.2,1.41-.1.41-.29.62-.8.54-1.3l-1.02-6.05,4.34-4.28c.36-.35.48-.88.33-1.36Z" />
             </svg>
           </span>
         ))}

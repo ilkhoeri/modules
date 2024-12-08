@@ -2,7 +2,7 @@ import { Svg, type SvgProps } from "../components/web/svg";
 
 export function Icon({ ...props }: SvgProps) {
   return (
-    <Svg {...props} data-initial="icon-theme-sync">
+    <Svg {...props}>
       <path d="M14.828 14.828a4 4 0 1 0 -5.656 -5.656a4 4 0 0 0 5.656 5.656z" />
       <g data-g="high">
         <path d="M4 12h-3" />

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, EffectCallback, DependencyList } from "react";
+import { DependencyList, EffectCallback, useEffect, useRef } from "react";
 
 export function useDidUpdate(
   fn: EffectCallback,
@@ -21,5 +21,5 @@ export function useDidUpdate(
 
     mounted.current = true;
     return undefined;
-  }, [dependencies, fn]);
+  }, dependencies);
 }

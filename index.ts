@@ -80,6 +80,7 @@ export { useNetwork } from "./hooks/use-network";
 export { useOS, type OS } from "./hooks/use-os";
 export { useDeviceInfo, type DeviceInfo } from "./hooks/use-device-info";
 export { useTrigger, useRender } from "./hooks/use-trigger";
+export { useTouch } from "./hooks/use-touch";
 export { useOrientation } from "./hooks/use-orientation";
 export { useReload } from "./hooks/use-reload";
 export { usePWAInstaller } from "./hooks/use-pwa-installer";

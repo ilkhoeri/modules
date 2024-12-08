@@ -1,7 +1,10 @@
+"use client";
 import * as React from "react";
-import { createPortal } from "react-dom";
 import * as Primitive from "@radix-ui/react-tooltip";
 import { cn } from "str-merge";
+import { useTouch } from "@/hooks/use-touch";
+import { createPortal } from "react-dom";
+import { mergeRefs } from "@/hooks/use-merged-ref";
 
 type TooltipOrigin = "trigger" | "content";
 type KeyType = "side" | "align" | "sideOffset";
@@ -13,30 +16,83 @@ type StylesNames<T extends string> = {
   styles?: Partial<Record<T, CSSProperties>>;
   style?: CSSProperties;
 };
+type TooltipProviderTypes = Primitive.TooltipProviderProps &
+  Primitive.TooltipProps;
 type TooltipProps = Omit<Primitive.TooltipTriggerProps, "content"> & {
   touch?: boolean;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  disableHoverableContent?: boolean;
-  delayDuration?: number;
-  defaultOpen?: boolean;
-  skipDelayDuration?: number;
   content?: React.ReactNode;
   withArrow?: boolean;
   contentProps?: Omit<Primitive.TooltipContentProps, KeyType>;
 } & Pick<Primitive.TooltipContentProps, KeyType> &
-  StylesNames<TooltipOrigin>;
+  StylesNames<TooltipOrigin> &
+  Omit<TooltipProviderTypes, "children">;
 
-const TooltipProvider = Primitive.Provider;
+interface CtxProps extends Omit<TooltipProviderTypes, "children"> {
+  touch?: boolean;
+  triggerRef: React.RefObject<HTMLButtonElement>;
+}
+interface ProviderProps extends Omit<CtxProps, "triggerRef"> {
+  children: React.ReactNode;
+}
 
-const TooltipRoot = Primitive.Root;
+const Ctx = React.createContext<CtxProps | undefined>(undefined);
+
+function TooltipProvider(Root: ProviderProps) {
+  const {
+    children,
+    open: openChange,
+    defaultOpen,
+    onOpenChange,
+    touch,
+    skipDelayDuration,
+    ...rest
+  } = Root;
+  const { open, triggerRef } = useTouch<HTMLButtonElement>({
+    open: openChange,
+    defaultOpen,
+    onOpenChange,
+    touch
+  });
+  const value = {
+    open,
+    triggerRef,
+    defaultOpen,
+    onOpenChange,
+    touch,
+    skipDelayDuration,
+    ...rest
+  };
+  return (
+    <Ctx.Provider value={value}>
+      <Primitive.Provider {...{ skipDelayDuration }}>
+        <Primitive.Root {...value}>{children}</Primitive.Root>
+      </Primitive.Provider>
+    </Ctx.Provider>
+  );
+}
+
+const useTooltip = () => {
+  const ctx = React.useContext(Ctx);
+  if (!ctx) {
+    throw new Error("useTooltip must be wrap an <TooltipProvider>");
+  }
+  return ctx;
+};
 
 const TooltipTrigger = React.forwardRef<
   React.ElementRef<typeof Primitive.Trigger>,
-  Primitive.TooltipTriggerProps & { touch?: boolean }
->(function TooltipTrigger({ touch, ...props }, ref) {
-  console.log("touch: is", touch);
-  return <Primitive.Trigger {...{ ref, ...props }} />;
+  Primitive.TooltipTriggerProps
+>(function TooltipTrigger({ ...props }, ref) {
+  const { touch, triggerRef } = useTooltip();
+  return (
+    <Primitive.Trigger
+      {...{
+        ref: mergeRefs(triggerRef, ref),
+        "data-touch": `${touch}`,
+        ...props
+      }}
+    />
+  );
 });
 TooltipTrigger.displayName = Primitive.TooltipTrigger.displayName;
 
@@ -60,7 +116,8 @@ const TooltipContent = React.forwardRef<
           className
         ),
         ...props
-      }}>
+      }}
+    >
       {children}
 
       {withArrow && (
@@ -71,7 +128,8 @@ const TooltipContent = React.forwardRef<
           data-side={side}
           data-align={align}
           data-tooltip="arrow"
-          className={arrow}>
+          className={arrow}
+        >
           <path d="m.7.4c.4,0,.8.2,1.1.5l4,4.1c.5.5,1.1.7,1.7.7s1.2-.2,1.7-.7L13.2.9c.3-.3.7-.5,1.1-.5s.4-.2.4-.4H.3c0,.2.2.4.4.4Z" />
           <path
             data-arrow="border"
@@ -104,45 +162,46 @@ const Tooltip = React.forwardRef<
     style,
     styles,
     withArrow,
-    touch,
+    touch = true,
     align = "center",
     side = "bottom",
     ...props
   } = _props;
   return (
-    <TooltipProvider {...{ skipDelayDuration }}>
-      <TooltipRoot
+    <TooltipProvider
+      {...{
+        skipDelayDuration,
+        open,
+        touch,
+        onOpenChange,
+        defaultOpen,
+        delayDuration,
+        disableHoverableContent
+      }}
+    >
+      <TooltipTrigger
         {...{
-          open,
-          onOpenChange,
-          defaultOpen,
-          delayDuration,
-          disableHoverableContent
-        }}>
-        <TooltipTrigger
+          ref,
+          className: cn(className, classNames?.trigger),
+          style: { ...style, ...styles?.trigger },
+          ...props
+        }}
+      />
+      {content && (
+        <TooltipContent
           {...{
-            ref,
-            touch,
-            className: cn(className, classNames?.trigger),
-            style: { ...style, ...styles?.trigger },
-            ...props
+            side,
+            align,
+            sideOffset,
+            withArrow,
+            className: cn(classNames?.content, contentProps?.className),
+            style: { ...styles?.content, ...contentProps?.style }
           }}
-        />
-        {content && (
-          <TooltipContent
-            {...{
-              side,
-              align,
-              sideOffset,
-              withArrow,
-              className: cn(classNames?.content, contentProps?.className),
-              style: { ...styles?.content, ...contentProps?.style }
-            }}
-            {...contentProps}>
-            {content}
-          </TooltipContent>
-        )}
-      </TooltipRoot>
+          {...contentProps}
+        >
+          {content}
+        </TooltipContent>
+      )}
     </TooltipProvider>
   );
 });
@@ -152,10 +211,4 @@ const arrow = cn(
   "absolute !h-[9px] !w-[23px] group-data-[align=center]/content:group-data-[side=bottom]/content:inset-x-auto group-data-[align=center]/content:group-data-[side=left]/content:inset-y-auto group-data-[align=center]/content:group-data-[side=right]/content:inset-y-auto group-data-[align=center]/content:group-data-[side=top]/content:inset-x-auto group-data-[align=end]/content:group-data-[side=bottom]/content:right-2 group-data-[align=end]/content:group-data-[side=left]/content:bottom-4 group-data-[align=end]/content:group-data-[side=right]/content:bottom-4 group-data-[align=end]/content:group-data-[side=top]/content:right-2 group-data-[align=start]/content:group-data-[side=bottom]/content:left-2 group-data-[align=start]/content:group-data-[side=left]/content:top-4 group-data-[align=start]/content:group-data-[side=right]/content:top-4 group-data-[align=start]/content:group-data-[side=top]/content:left-2 group-data-[side=bottom]/content:bottom-[calc(100%-0px)] group-data-[side=left]/content:left-[calc(100%-7px)] group-data-[side=right]/content:right-[calc(100%-7px)] group-data-[side=top]/content:top-[calc(100%-0px)] group-data-[side=bottom]/content:rotate-180 group-data-[side=left]/content:-rotate-90 group-data-[side=right]/content:rotate-90 group-data-[side=top]/content:rotate-0 [&_[data-arrow=border]]:text-border"
 );
 
-export {
-  Tooltip,
-  TooltipRoot,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider
-};
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };

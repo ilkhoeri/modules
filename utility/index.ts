@@ -29,3 +29,5 @@ export {
   truncate,
   compareWords
 } from "./text-parser";
+
+export { px, em, rem } from "./units-converters";
